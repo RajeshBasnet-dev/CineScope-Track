@@ -443,7 +443,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Update the data attribute
                         document.getElementById('watchlist-data').dataset.watchStatus = '';
                     } else {
-                        alert('Error removing from watchlist: ' + data.message);
+                        // If item is not found, it's already removed, so just update UI
+                        if (data.message === 'Item not found') {
+                            updateWatchlistUI(false);
+                            // Update the data attribute
+                            document.getElementById('watchlist-data').dataset.watchStatus = '';
+                        } else {
+                            alert('Error removing from watchlist: ' + data.message);
+                        }
                     }
                 })
                 .catch(error => {
