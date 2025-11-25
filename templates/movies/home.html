@@ -131,6 +131,51 @@
 </div>
 
 <script>
+// Custom notification function for better user experience
+function showNotification(message, type = 'info') {
+    // Remove any existing notifications
+    const existingNotification = document.getElementById('custom-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.id = 'custom-notification';
+    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-all duration-300 ease-in-out`;
+    
+    // Set styles based on type
+    if (type === 'success') {
+        notification.classList.add('bg-green-600', 'text-white');
+    } else if (type === 'error') {
+        notification.classList.add('bg-red-600', 'text-white');
+    } else if (type === 'warning') {
+        notification.classList.add('bg-yellow-500', 'text-dark-bg');
+    } else {
+        notification.classList.add('bg-electric-blue', 'text-white');
+    }
+    
+    notification.innerHTML = `
+        <div class="flex items-center">
+            ${type === 'success' ? '<i class="fas fa-check-circle mr-2"></i>' : ''}
+            ${type === 'error' ? '<i class="fas fa-exclamation-circle mr-2"></i>' : ''}
+            ${type === 'warning' ? '<i class="fas fa-exclamation-triangle mr-2"></i>' : ''}
+            ${type === 'info' ? '<i class="fas fa-info-circle mr-2"></i>' : ''}
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Add to document
+    document.body.appendChild(notification);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 3000);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Add to watchlist functionality for home page
     const addToWatchlistButtons = document.querySelectorAll('.add-to-watchlist');
@@ -139,12 +184,15 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             // Check if user is authenticated
             if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
-                alert('Please sign in to add items to your watchlist.');
+                showNotification('Please sign in to add items to your watchlist', 'warning');
                 return;
             }
             
             const contentId = this.dataset.contentId;
             const contentType = this.dataset.contentType;
+            
+            // Store original button content for reset
+            const originalHTML = this.innerHTML;
             
             // Send request to add to watchlist
             fetch('{% url "add_to_watchlist" %}', {
@@ -167,19 +215,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.classList.remove('bg-electric-blue', 'hover:bg-vibrant-teal');
                     this.classList.add('bg-green-600');
                     
+                    showNotification('Successfully added to watchlist', 'success');
+                    
                     // Reset button after 2 seconds
                     setTimeout(() => {
-                        this.innerHTML = '<i class="fas fa-plus mr-1"></i> Add';
+                        this.innerHTML = originalHTML;
                         this.classList.remove('bg-green-600');
                         this.classList.add('bg-electric-blue', 'hover:bg-vibrant-teal');
                     }, 2000);
                 } else {
-                    alert('Error adding to watchlist: ' + data.message);
+                    showNotification('Failed to add to watchlist: ' + data.message, 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error adding to watchlist: Network error');
+                showNotification('Network error while adding to watchlist', 'error');
             });
         });
     });

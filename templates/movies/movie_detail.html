@@ -383,6 +383,51 @@
 </style>
 
 <script>
+// Custom notification function for better user experience
+function showNotification(message, type = 'info') {
+    // Remove any existing notifications
+    const existingNotification = document.getElementById('custom-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.id = 'custom-notification';
+    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-all duration-300 ease-in-out`;
+    
+    // Set styles based on type
+    if (type === 'success') {
+        notification.classList.add('bg-green-600', 'text-white');
+    } else if (type === 'error') {
+        notification.classList.add('bg-red-600', 'text-white');
+    } else if (type === 'warning') {
+        notification.classList.add('bg-yellow-500', 'text-dark-bg');
+    } else {
+        notification.classList.add('bg-electric-blue', 'text-white');
+    }
+    
+    notification.innerHTML = `
+        <div class="flex items-center">
+            ${type === 'success' ? '<i class="fas fa-check-circle mr-2"></i>' : ''}
+            ${type === 'error' ? '<i class="fas fa-exclamation-circle mr-2"></i>' : ''}
+            ${type === 'warning' ? '<i class="fas fa-exclamation-triangle mr-2"></i>' : ''}
+            ${type === 'info' ? '<i class="fas fa-info-circle mr-2"></i>' : ''}
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Add to document
+    document.body.appendChild(notification);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 3000);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Get movie ID from data attribute
     const movieId = "{{ movie.id }}";
@@ -414,8 +459,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize watchlist button state
     // We'll use a data attribute to pass the initial state
-    const initialWatchStatus = document.getElementById('watchlist-data').dataset.watchStatus;
-    if (initialWatchStatus) {
+    const currentWatchStatus = document.getElementById('watchlist-data').dataset.watchStatus;
+    const initialCompletedStatus = currentWatchStatus === 'completed';
+    if (initialCompletedStatus) {
+        updateWatchedUI(true);
+    }
+    
+    // Also update watchlist button if item is in any watchlist status
+    if (currentWatchStatus) {
         updateWatchlistUI(true);
     }
     
@@ -442,20 +493,22 @@ document.addEventListener('DOMContentLoaded', function() {
                         updateWatchlistUI(false);
                         // Update the data attribute
                         document.getElementById('watchlist-data').dataset.watchStatus = '';
+                        showNotification('Successfully removed from watchlist', 'success');
                     } else {
                         // If item is not found, it's already removed, so just update UI
                         if (data.message === 'Item not found') {
                             updateWatchlistUI(false);
                             // Update the data attribute
                             document.getElementById('watchlist-data').dataset.watchStatus = '';
+                            showNotification('Item was not in watchlist', 'info');
                         } else {
-                            alert('Error removing from watchlist: ' + data.message);
+                            showNotification('Failed to remove from watchlist: ' + data.message, 'error');
                         }
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error removing from watchlist');
+                    showNotification('Network error while removing from watchlist', 'error');
                 });
             } else {
                 // Add to watchlist
@@ -477,13 +530,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         updateWatchlistUI(true);
                         // Update the data attribute
                         document.getElementById('watchlist-data').dataset.watchStatus = 'plan_to_watch';
+                        showNotification('Successfully added to watchlist', 'success');
                     } else {
-                        alert('Error adding to watchlist: ' + data.message);
+                        showNotification('Failed to add to watchlist: ' + data.message, 'error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error adding to watchlist');
+                    showNotification('Network error while adding to watchlist', 'error');
                 });
             }
         });
@@ -508,14 +562,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Initialize watched button state
-    const currentWatchStatus = document.getElementById('watchlist-data').dataset.watchStatus;
-    const initialCompletedStatus = currentWatchStatus === 'completed';
-    if (initialCompletedStatus) {
+    const initialWatchStatus = document.getElementById('watchlist-data').dataset.watchStatus;
+    const initialCompletedStatusWatched = initialWatchStatus === 'completed';
+    if (initialCompletedStatusWatched) {
         updateWatchedUI(true);
     }
     
     // Also update watchlist button if item is in any watchlist status
-    if (currentWatchStatus) {
+    if (initialWatchStatus) {
         updateWatchlistUI(true);
     }
 
@@ -545,17 +599,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     updateWatchlistUI(true);
                     // Update the data attribute to reflect the new status
                     document.getElementById('watchlist-data').dataset.watchStatus = newStatus;
+                    
+                    // Show appropriate message
+                    if (newStatus === 'completed') {
+                        showNotification('Marked as watched', 'success');
+                    } else {
+                        showNotification('Marked as plan to watch', 'success');
+                    }
                 } else {
-                    alert('Error updating watch status: ' + data.message);
+                    showNotification('Failed to update watch status: ' + data.message, 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error updating watch status: Network error');
+                showNotification('Network error while updating watch status', 'error');
             });
         });
     }
-
+    
     // Favorite toggle functionality
     const favoriteBtn = document.getElementById('favorite-toggle');
     
@@ -568,9 +629,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isFavorited) {
                 this.innerHTML = '<i class="fas fa-heart mr-2"></i> Favorite';
                 this.classList.remove('text-red-500');
+                showNotification('Removed from favorites', 'info');
             } else {
                 this.innerHTML = '<i class="fas fa-heart mr-2"></i> Favorited';
                 this.classList.add('text-red-500');
+                showNotification('Added to favorites', 'success');
             }
         });
     }
