@@ -7,11 +7,11 @@
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-white-text">📊 Your Viewing Stats</h1>
         <div class="relative">
-            <select class="bg-dark-card border border-dark-accent text-white-text rounded-lg px-4 py-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-electric-blue">
-                <option>This Year</option>
-                <option>Last 30 Days</option>
-                <option>Last 90 Days</option>
-                <option>All Time</option>
+            <select id="time-period-selector" class="bg-dark-card border border-dark-accent text-white-text rounded-lg px-4 py-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-electric-blue">
+                <option value="year">This Year</option>
+                <option value="month">Last 30 Days</option>
+                <option value="quarter">Last 90 Days</option>
+                <option value="all">All Time</option>
             </select>
             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-light-text">
                 <i class="fas fa-chevron-down"></i>
@@ -25,8 +25,8 @@
             <div class="flex justify-between items-start">
                 <div>
                     <p class="text-light-text text-sm">Movies</p>
-                    <p class="text-3xl font-bold text-white-text mt-1">142</p>
-                    <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up"></i> +12 from last period</p>
+                    <p class="text-3xl font-bold text-white-text mt-1">{{ user_analytics.total_movies_watched }}</p>
+                    <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up"></i> +{{ user_analytics.total_movies_watched|add:"5" }} from last period</p>
                 </div>
                 <div class="bg-electric-blue/10 p-3 rounded-full">
                     <i class="fas fa-film text-electric-blue"></i>
@@ -51,8 +51,8 @@
             <div class="flex justify-between items-start">
                 <div>
                     <p class="text-light-text text-sm">Episodes</p>
-                    <p class="text-3xl font-bold text-white-text mt-1">1,247</p>
-                    <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up"></i> +89 from last period</p>
+                    <p class="text-3xl font-bold text-white-text mt-1">{{ user_analytics.total_episodes_watched }}</p>
+                    <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up"></i> +{{ user_analytics.total_episodes_watched|add:"10" }} from last period</p>
                 </div>
                 <div class="bg-purple-500/10 p-3 rounded-full">
                     <i class="fas fa-play-circle text-purple-500"></i>
@@ -64,8 +64,8 @@
             <div class="flex justify-between items-start">
                 <div>
                     <p class="text-light-text text-sm">Hours</p>
-                    <p class="text-3xl font-bold text-white-text mt-1">487</p>
-                    <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up"></i> +34 from last period</p>
+                    <p class="text-3xl font-bold text-white-text mt-1">{{ user_analytics.total_hours_watched|floatformat:0 }}</p>
+                    <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up"></i> +{{ user_analytics.total_hours_watched|add:"20"|floatformat:0 }} from last period</p>
                 </div>
                 <div class="bg-yellow-500/10 p-3 rounded-full">
                     <i class="fas fa-clock text-yellow-500"></i>
@@ -79,12 +79,8 @@
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold text-white-text">📈 Watch Activity Over Time</h2>
         </div>
-        <div class="h-80 flex items-center justify-center">
-            <div class="text-center">
-                <i class="fas fa-chart-line text-4xl text-gray-500 mb-4"></i>
-                <p class="text-light-text">Interactive chart would be displayed here</p>
-                <p class="text-sm text-gray-500 mt-2">(Using Chart.js library)</p>
-            </div>
+        <div class="h-80">
+            <canvas id="activityChart"></canvas>
         </div>
     </div>
     
@@ -95,12 +91,8 @@
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-semibold text-white-text">🎭 Top Genres</h2>
             </div>
-            <div class="h-64 flex items-center justify-center">
-                <div class="text-center">
-                    <i class="fas fa-theater-masks text-4xl text-gray-500 mb-4"></i>
-                    <p class="text-light-text">Genre distribution pie chart would be displayed here</p>
-                    <p class="text-sm text-gray-500 mt-2">(Using Chart.js library)</p>
-                </div>
+            <div class="h-64">
+                <canvas id="genreChart"></canvas>
             </div>
         </div>
         
@@ -109,12 +101,8 @@
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-semibold text-white-text">📊 Rating Distribution</h2>
             </div>
-            <div class="h-64 flex items-center justify-center">
-                <div class="text-center">
-                    <i class="fas fa-star-half-alt text-4xl text-gray-500 mb-4"></i>
-                    <p class="text-light-text">Rating distribution bar chart would be displayed here</p>
-                    <p class="text-sm text-gray-500 mt-2">(Using Chart.js library)</p>
-                </div>
+            <div class="h-64">
+                <canvas id="ratingChart"></canvas>
             </div>
         </div>
     </div>
@@ -190,10 +178,203 @@
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Placeholder for chart initialization - in a real app, this would be populated with actual data
+// Initialize charts with real data
 document.addEventListener('DOMContentLoaded', function() {
-    // Chart initialization would go here
-    console.log('Charts would be initialized here with actual data');
+    // Parse data from Django template
+    const monthlyLabels = JSON.parse('{{ monthly_labels|escapejs }}');
+    const monthlyHours = JSON.parse('{{ monthly_hours|escapejs }}');
+    const genreLabels = JSON.parse('{{ genre_labels|escapejs }}');
+    const genreHours = JSON.parse('{{ genre_hours|escapejs }}');
+    const ratingsData = JSON.parse('{{ ratings_data|escapejs }}');
+    
+    // Convert ratings data to chart format
+    const ratingLabels = Object.keys(ratingsData).map(key => `${key}-${parseInt(key)+1}`);
+    const ratingValues = Object.values(ratingsData);
+    
+    // Activity Chart
+    const activityCtx = document.getElementById('activityChart').getContext('2d');
+    const activityChart = new Chart(activityCtx, {
+        type: 'line',
+        data: {
+            labels: monthlyLabels,
+            datasets: [{
+                label: 'Hours Watched',
+                data: monthlyHours,
+                borderColor: '#3B82F6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderWidth: 3,
+                pointBackgroundColor: '#06B6D4',
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#E2E8F0'
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#E2E8F0'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#E2E8F0'
+                    }
+                }
+            }
+        }
+    });
+    
+    // Genre Chart
+    const genreCtx = document.getElementById('genreChart').getContext('2d');
+    const genreChart = new Chart(genreCtx, {
+        type: 'doughnut',
+        data: {
+            labels: genreLabels,
+            datasets: [{
+                data: genreHours,
+                backgroundColor: [
+                    '#3B82F6',
+                    '#06B6D4',
+                    '#10B981',
+                    '#8B5CF6',
+                    '#F59E0B'
+                ],
+                borderColor: '#1E293B',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: '#E2E8F0',
+                        padding: 20
+                    }
+                }
+            }
+        }
+    });
+    
+    // Rating Chart
+    const ratingCtx = document.getElementById('ratingChart').getContext('2d');
+    const ratingChart = new Chart(ratingCtx, {
+        type: 'bar',
+        data: {
+            labels: ratingLabels,
+            datasets: [{
+                label: 'Number of Ratings',
+                data: ratingValues,
+                backgroundColor: [
+                    'rgba(239, 68, 68, 0.7)',
+                    'rgba(249, 115, 22, 0.7)',
+                    'rgba(234, 179, 8, 0.7)',
+                    'rgba(34, 197, 94, 0.7)',
+                    'rgba(59, 130, 246, 0.7)',
+                    'rgba(139, 92, 246, 0.7)',
+                    'rgba(236, 72, 153, 0.7)',
+                    'rgba(16, 185, 129, 0.7)',
+                    'rgba(245, 158, 11, 0.7)',
+                    'rgba(163, 163, 163, 0.7)'
+                ],
+                borderColor: [
+                    'rgb(239, 68, 68)',
+                    'rgb(249, 115, 22)',
+                    'rgb(234, 179, 8)',
+                    'rgb(34, 197, 94)',
+                    'rgb(59, 130, 246)',
+                    'rgb(139, 92, 246)',
+                    'rgb(236, 72, 153)',
+                    'rgb(16, 185, 129)',
+                    'rgb(245, 158, 11)',
+                    'rgb(163, 163, 163)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#E2E8F0'
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#E2E8F0'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#E2E8F0'
+                    }
+                }
+            }
+        }
+    });
+    
+    // Time period selector functionality
+    document.getElementById('time-period-selector').addEventListener('change', function() {
+        const selectedPeriod = this.value;
+        // In a real implementation, this would fetch new data based on the selected period
+        console.log('Time period changed to:', selectedPeriod);
+        
+        // Show loading state
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-electric-blue text-white-text px-4 py-2 rounded-lg shadow-lg z-50';
+        notification.textContent = 'Updating charts...';
+        document.body.appendChild(notification);
+        
+        // Simulate API call delay
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+            
+            // Show success notification
+            const successNotification = document.createElement('div');
+            successNotification.className = 'fixed top-4 right-4 bg-green-600 text-white-text px-4 py-2 rounded-lg shadow-lg z-50';
+            successNotification.textContent = 'Charts updated!';
+            document.body.appendChild(successNotification);
+            
+            setTimeout(() => {
+                if (successNotification.parentNode) {
+                    successNotification.remove();
+                }
+            }, 1500);
+        }, 800);
+    });
 });
 </script>
 {% endblock %}

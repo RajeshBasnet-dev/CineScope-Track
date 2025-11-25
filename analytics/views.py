@@ -35,12 +35,47 @@ def dashboard(request):
     completed_items = UserWatchlist.objects.filter(user=user, status='completed').count()
     completion_rate = (completed_items / total_watchlist_items * 100) if total_watchlist_items > 0 else 0
     
+    # Prepare data for charts
+    # Monthly activity data for the chart
+    monthly_labels = []
+    monthly_hours = []
+    monthly_movies = []
+    monthly_episodes = []
+    
+    # Process monthly data in reverse order (oldest first for chart)
+    for activity in reversed(list(monthly_data)):
+        month_name = datetime(2000, activity.month, 1).strftime('%b')
+        monthly_labels.append(month_name)
+        monthly_hours.append(activity.hours_watched)
+        monthly_movies.append(activity.movies_watched)
+        monthly_episodes.append(activity.episodes_watched)
+    
+    # Genre data for the chart
+    genre_labels = []
+    genre_hours = []
+    
+    for genre in genre_data:
+        genre_labels.append(genre.genre_name)
+        genre_hours.append(genre.hours_spent)
+    
+    # Rating distribution data
+    ratings_data = {}
+    for i in range(1, 11):
+        ratings_data[i] = UserRating.objects.filter(user=user, rating=i).count()
+    
     context = {
         'user_analytics': user_analytics,
         'genre_data': genre_data,
         'monthly_data': monthly_data,
         'user_ratings': user_ratings,
         'completion_rate': completion_rate,
+        'monthly_labels': json.dumps(monthly_labels),
+        'monthly_hours': json.dumps(monthly_hours),
+        'monthly_movies': json.dumps(monthly_movies),
+        'monthly_episodes': json.dumps(monthly_episodes),
+        'genre_labels': json.dumps(genre_labels),
+        'genre_hours': json.dumps(genre_hours),
+        'ratings_data': json.dumps(ratings_data)
     }
     
     return render(request, 'analytics/dashboard.html', context)
