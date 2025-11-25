@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ tv_show.name }} - CineScope Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-screen-xl mx-auto">
+    {% if tv_show %}
+    <!-- Hero Section -->
+    <div class="relative rounded-2xl overflow-hidden mb-8">
+        {% if tv_show.backdrop_path %}
+        <div class="absolute inset-0 bg-[url('https://image.tmdb.org/t/p/original{{ tv_show.backdrop_path }}')] bg-cover bg-center opacity-30"></div>
+        {% endif %}
+        <div class="relative z-10 bg-gradient-to-r from-dark-card to-dark-accent p-6 md:p-8 rounded-2xl">
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Poster -->
+                <div class="md:w-1/3 flex justify-center">
+                    {% if tv_show.poster_path %}
+                    <img src="https://image.tmdb.org/t/p/w500{{ tv_show.poster_path }}" alt="{{ tv_show.name }}" class="rounded-xl shadow-2xl w-full max-w-xs md:max-w-none">
+                    {% else %}
+                    <div class="bg-dark-accent border-2 border-dashed rounded-xl w-64 h-96 flex items-center justify-center">
+                        <i class="fas fa-tv text-gray-500 text-6xl"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- TV Show Info -->
+                <div class="md:w-2/3">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white-text mb-2">{{ tv_show.name }}</h1>
+                    <div class="flex flex-wrap items-center gap-4 mb-6">
+                        <span class="text-light-text">{{ tv_show.first_air_date|slice:":4" }}</span>
+                        {% if tv_show.last_air_date and tv_show.first_air_date != tv_show.last_air_date %}
+                        <span class="text-light-text">- {{ tv_show.last_air_date|slice:":4" }}</span>
+                        {% endif %}
+                        <span class="text-light-text">• {{ tv_show.number_of_seasons }} Seasons</span>
+                        <div class="flex items-center">
+                            <i class="fas fa-star text-yellow-400 mr-1"></i>
+                            <span class="text-light-text">{{ tv_show.vote_average|floatformat:1 }}/10</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Genres -->
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        {% for genre in tv_show.genres %}
+                        <span class="bg-electric-blue/20 text-electric-blue px-3 py-1 rounded-full text-sm">{{ genre.name }}</span>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Overview -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-white-text mb-3">Overview</h3>
+                        <p class="text-light-text leading-relaxed">{{ tv_show.overview }}</p>
+                    </div>
+                    
+                    <!-- User Rating -->
+                    {% if user.is_authenticated %}
+                    <div class="bg-dark-accent rounded-xl p-6 mb-6">
+                        <h3 class="text-xl font-semibold text-white-text mb-4">Your Rating</h3>
+                        <div class="flex items-center">
+                            <div class="flex mr-4" id="user-rating-stars">
+                                {% for i in "1234567890" %}
+                                    <i class="rating-star fas fa-star text-gray-600 cursor-pointer text-2xl hover:text-yellow-400 transition duration-300" 
+                                       data-rating="{{ forloop.counter }}"></i>
+                                {% endfor %}
+                            </div>
+                            <span id="rating-value" class="text-light-text">
+                                {% if user_rating %}
+                                    {{ user_rating }}/10
+                                {% else %}
+                                    Not rated
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{% url 'write_review' 'tv' tv_show.id %}" class="inline-flex items-center bg-electric-blue hover:bg-vibrant-teal text-white-text px-4 py-2 rounded-lg font-medium transition duration-300">
+                                <i class="fas fa-pen mr-2"></i> Write Detailed Review
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex flex-wrap gap-4">
+                        <button class="flex items-center bg-electric-blue hover:bg-vibrant-teal text-white-text px-6 py-3 rounded-lg font-medium transition duration-300">
+                            <i class="fas fa-plus mr-2"></i> Add to Watchlist
+                        </button>
+                        <button class="flex items-center bg-dark-accent hover:bg-dark-card text-white-text px-6 py-3 rounded-lg font-medium transition duration-300 border border-dark-accent">
+                            <i class="fas fa-check mr-2"></i> Mark as Completed
+                        </button>
+                        <a href="{% url 'episode_tracker' tv_show.id %}" class="flex items-center bg-vibrant-teal hover:bg-electric-blue text-white-text px-6 py-3 rounded-lg font-medium transition duration-300">
+                            <i class="fas fa-tasks mr-2"></i> Episode Tracker
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cast Section -->
+    {% if cast %}
+    <div class="bg-dark-card rounded-2xl p-6 mb-8 shadow-lg">
+        <h2 class="text-2xl font-bold text-white-text mb-6">Cast</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            {% for person in cast %}
+            <div class="text-center">
+                {% if person.profile_path %}
+                <img src="https://image.tmdb.org/t/p/w185{{ person.profile_path }}" alt="{{ person.name }}" class="w-full rounded-xl mb-3 shadow-md">
+                {% else %}
+                <div class="bg-dark-accent border-2 border-dashed rounded-xl w-full h-32 flex items-center justify-center mb-3">
+                    <i class="fas fa-user text-gray-500 text-2xl"></i>
+                </div>
+                {% endif %}
+                <p class="font-medium text-white-text text-sm">{{ person.name }}</p>
+                <p class="text-light-text text-xs">{{ person.character }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Reviews Section -->
+    <div class="bg-dark-card rounded-2xl p-6 shadow-lg">
+        <h2 class="text-2xl font-bold text-white-text mb-6">Reviews</h2>
+        <div class="border border-dark-accent rounded-xl p-6 text-center">
+            <i class="fas fa-comment-dots text-4xl text-gray-500 mb-4"></i>
+            <p class="text-light-text">No reviews yet. Be the first to review!</p>
+        </div>
+    </div>
+    {% else %}
+    <div class="bg-dark-card rounded-2xl p-12 text-center shadow-lg">
+        <i class="fas fa-exclamation-circle text-5xl text-gray-500 mb-6"></i>
+        <h2 class="text-2xl font-bold text-white-text mb-4">TV Show Not Found</h2>
+        <p class="text-light-text mb-6">Sorry, we couldn't find the TV show you're looking for.</p>
+        <a href="{% url 'movies_home' %}" class="px-6 py-3 bg-electric-blue hover:bg-vibrant-teal text-white-text rounded-lg font-medium transition duration-300">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Home
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Rating functionality
+    const stars = document.querySelectorAll('.rating-star');
+    const ratingValue = document.getElementById('rating-value');
+    const reviewText = document.getElementById('review-text');
+    const submitButton = document.getElementById('submit-rating');
+    
+    // Get initial rating from data attribute
+    const initialRating = parseInt(document.getElementById('rating-data').dataset.rating);
+    let currentRating = initialRating;
+    
+    // Set initial star display
+    updateStarDisplay(currentRating);
+    
+    // Add event listeners to stars
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = parseInt(this.dataset.rating);
+            currentRating = rating;
+            updateStarDisplay(rating);
+            ratingValue.textContent = rating + '/5';
+        });
+        
+        star.addEventListener('mouseover', function() {
+            const rating = parseInt(this.dataset.rating);
+            updateStarDisplay(rating);
+        });
+        
+        star.addEventListener('mouseout', function() {
+            updateStarDisplay(currentRating);
+        });
+    });
+    
+    // Submit rating
+    submitButton.addEventListener('click', function() {
+        if (currentRating === 0) {
+            alert('Please select a rating');
+            return;
+        }
+        
+        // Get TV show ID from data attribute
+        const tvId = document.getElementById('tv-data').dataset.tvId;
+        
+        fetch('{% url "submit_rating" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                content_id: tvId,
+                content_type: 'tv',
+                rating: currentRating,
+                review_text: reviewText.value
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Rating submitted successfully!');
+            } else {
+                alert('Error submitting rating');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error submitting rating');
+        });
+    });
+    
+    function updateStarDisplay(rating) {
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.remove('text-gray-600');
+                star.classList.add('text-yellow-400');
+            } else {
+                star.classList.remove('text-yellow-400');
+                star.classList.add('text-gray-600');
+            }
+        });
+    }
+});
+</script>
+
+<!-- Hidden data for JavaScript -->
+<div id="rating-data" data-rating="{% if user_rating %}{{ user_rating }}{% else %}0{% endif %}" style="display: none;"></div>
+<div id="tv-data" data-tv-id="{{ tv_show.id }}" style="display: none;"></div>
+{% endblock %}

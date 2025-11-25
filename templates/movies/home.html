@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Movies & TV Shows - CineScope Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-screen-xl mx-auto">
+    <!-- Hero Section -->
+    <div class="relative rounded-2xl overflow-hidden mb-12 bg-gradient-to-r from-dark-card to-dark-accent p-8 md:p-12">
+        <div class="absolute inset-0 bg-[url('https://image.tmdb.org/t/p/original/1i1N0AVRb54GzY4zb6Cr5qHNH5s.jpg')] bg-cover bg-center opacity-20"></div>
+        <div class="relative z-10 max-w-2xl">
+            <h1 class="text-4xl md:text-5xl font-bold text-white-text mb-4">Discover Your Next Favorite</h1>
+            <p class="text-xl text-light-text mb-8">Track movies and TV shows, get smart recommendations, and visualize your watching habits.</p>
+            {% if not user.is_authenticated %}
+            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="{% url 'register' %}" class="px-8 py-3 bg-electric-blue hover:bg-vibrant-teal text-white-text font-medium rounded-lg transition duration-300 text-center">Get Started</a>
+                <a href="{% url 'login' %}" class="px-8 py-3 bg-dark-accent hover:bg-dark-card text-white-text font-medium rounded-lg transition duration-300 text-center border border-dark-accent">Sign In</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="bg-dark-card rounded-2xl p-6 mb-12 shadow-lg">
+        <form method="get" action="{% url 'search' %}">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-grow">
+                    <input type="text" name="q" placeholder="Search for movies or TV shows..." class="w-full px-6 py-4 bg-dark-accent border border-dark-accent rounded-xl text-white-text focus:outline-none focus:ring-2 focus:ring-electric-blue focus:border-transparent transition duration-300">
+                </div>
+                <button type="submit" class="px-8 py-4 bg-electric-blue hover:bg-vibrant-teal text-white-text font-medium rounded-xl transition duration-300 flex items-center justify-center">
+                    <i class="fas fa-search mr-2"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Trending Movies -->
+    <section class="mb-12">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-white-text">Trending Movies</h2>
+            <a href="{% url 'search' %}?type=movie" class="text-electric-blue hover:text-vibrant-teal transition duration-300 text-sm font-medium">View All</a>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            {% for movie in trending_movies %}
+            <div class="group relative bg-dark-card rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                {% if movie.poster_path %}
+                <div class="aspect-w-2 aspect-h-3">
+                    <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}" class="w-full h-80 object-cover">
+                </div>
+                {% else %}
+                <div class="bg-dark-accent border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                    <i class="fas fa-film text-gray-500 text-4xl"></i>
+                </div>
+                {% endif %}
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">{{ movie.title }}</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">{{ movie.vote_average|floatformat:1 }}</span>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-4 py-2 rounded-lg font-medium text-sm transition duration-300">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-12">
+                <p class="text-light-text">No trending movies available.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Trending TV Shows -->
+    <section>
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-white-text">Trending TV Shows</h2>
+            <a href="{% url 'search' %}?type=tv" class="text-electric-blue hover:text-vibrant-teal transition duration-300 text-sm font-medium">View All</a>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            {% for show in trending_tv %}
+            <div class="group relative bg-dark-card rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                {% if show.poster_path %}
+                <div class="aspect-w-2 aspect-h-3">
+                    <img src="https://image.tmdb.org/t/p/w500{{ show.poster_path }}" alt="{{ show.name }}" class="w-full h-80 object-cover">
+                </div>
+                {% else %}
+                <div class="bg-dark-accent border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                    <i class="fas fa-tv text-gray-500 text-4xl"></i>
+                </div>
+                {% endif %}
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">{{ show.name }}</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">{{ show.vote_average|floatformat:1 }}</span>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-4 py-2 rounded-lg font-medium text-sm transition duration-300">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-12">
+                <p class="text-light-text">No trending TV shows available.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

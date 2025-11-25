@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+
+{% block title %}My Watchlists - CineScope Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-screen-xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-white-text">My Watchlists</h1>
+        <button class="px-4 py-2 bg-electric-blue hover:bg-vibrant-teal text-white-text rounded-lg font-medium transition duration-300">
+            <i class="fas fa-plus mr-2"></i> Create Custom List
+        </button>
+    </div>
+    
+    <!-- Tab Navigation -->
+    <div class="flex border-b border-dark-accent mb-8">
+        <button class="tab-button px-6 py-3 font-medium text-light-text border-b-2 border-transparent hover:text-white-text transition duration-300" data-tab="plan_to_watch">
+            Plan to Watch <span class="ml-2 bg-dark-accent text-light-text text-xs px-2 py-1 rounded-full">{{ plan_to_watch.count }}</span>
+        </button>
+        <button class="tab-button px-6 py-3 font-medium text-light-text border-b-2 border-transparent hover:text-white-text transition duration-300" data-tab="watching">
+            Watching <span class="ml-2 bg-dark-accent text-light-text text-xs px-2 py-1 rounded-full">{{ watching.count }}</span>
+        </button>
+        <button class="tab-button px-6 py-3 font-medium text-light-text border-b-2 border-transparent hover:text-white-text transition duration-300" data-tab="completed">
+            Completed <span class="ml-2 bg-dark-accent text-light-text text-xs px-2 py-1 rounded-full">{{ completed.count }}</span>
+        </button>
+        <button class="tab-button px-6 py-3 font-medium text-light-text border-b-2 border-transparent hover:text-white-text transition duration-300" data-tab="dropped">
+            Dropped <span class="ml-2 bg-dark-accent text-light-text text-xs px-2 py-1 rounded-full">{{ dropped.count }}</span>
+        </button>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- Plan to Watch Tab -->
+        <div id="plan_to_watch" class="tab-panel">
+            {% if plan_to_watch %}
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                {% for item in plan_to_watch %}
+                <div class="group relative bg-dark-card rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="aspect-w-2 aspect-h-3">
+                        <div class="bg-dark-accent border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                            {% if item.content_type == 'movie' %}
+                            <i class="fas fa-film text-gray-500 text-4xl"></i>
+                            {% else %}
+                            <i class="fas fa-tv text-gray-500 text-4xl"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 class="font-semibold text-white-text text-sm truncate">Content {{ item.content_id }}</h3>
+                        <div class="flex items-center mt-1">
+                            <span class="bg-blue-500/20 text-blue-400 text-xs px-2 py-1 rounded">Plan to Watch</span>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <div class="flex flex-col gap-2">
+                            <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-sm transition duration-300">
+                                <i class="fas fa-plus mr-1"></i> Details
+                            </button>
+                            <button class="bg-dark-accent hover:bg-dark-card text-white-text px-3 py-1 rounded-lg font-medium text-sm transition duration-300 border border-dark-accent">
+                                <i class="fas fa-times mr-1"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="bg-dark-card rounded-2xl p-12 text-center shadow-lg">
+                <i class="fas fa-clipboard-list text-5xl text-gray-500 mb-6"></i>
+                <h2 class="text-2xl font-bold text-white-text mb-4">No Items in Plan to Watch</h2>
+                <p class="text-light-text mb-6">Add movies and TV shows to your "Plan to Watch" list to keep track of what you want to watch next.</p>
+                <a href="{% url 'search' %}" class="px-6 py-3 bg-electric-blue hover:bg-vibrant-teal text-white-text rounded-lg font-medium transition duration-300">
+                    <i class="fas fa-search mr-2"></i> Browse Content
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Watching Tab -->
+        <div id="watching" class="tab-panel hidden">
+            {% if watching %}
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                {% for item in watching %}
+                <div class="group relative bg-dark-card rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="aspect-w-2 aspect-h-3">
+                        <div class="bg-dark-accent border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                            {% if item.content_type == 'movie' %}
+                            <i class="fas fa-film text-gray-500 text-4xl"></i>
+                            {% else %}
+                            <i class="fas fa-tv text-gray-500 text-4xl"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 class="font-semibold text-white-text text-sm truncate">Content {{ item.content_id }}</h3>
+                        <div class="flex items-center mt-1">
+                            <span class="bg-yellow-500/20 text-yellow-400 text-xs px-2 py-1 rounded">Watching</span>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <div class="flex flex-col gap-2">
+                            <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-sm transition duration-300">
+                                <i class="fas fa-plus mr-1"></i> Details
+                            </button>
+                            <button class="bg-dark-accent hover:bg-dark-card text-white-text px-3 py-1 rounded-lg font-medium text-sm transition duration-300 border border-dark-accent">
+                                <i class="fas fa-times mr-1"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="bg-dark-card rounded-2xl p-12 text-center shadow-lg">
+                <i class="fas fa-play-circle text-5xl text-gray-500 mb-6"></i>
+                <h2 class="text-2xl font-bold text-white-text mb-4">No Items in Watching</h2>
+                <p class="text-light-text mb-6">Move items from "Plan to Watch" to "Watching" when you start viewing them.</p>
+                <a href="{% url 'watchlist' %}?tab=plan_to_watch" class="px-6 py-3 bg-electric-blue hover:bg-vibrant-teal text-white-text rounded-lg font-medium transition duration-300">
+                    <i class="fas fa-clipboard-list mr-2"></i> View Plan to Watch
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Completed Tab -->
+        <div id="completed" class="tab-panel hidden">
+            {% if completed %}
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                {% for item in completed %}
+                <div class="group relative bg-dark-card rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="aspect-w-2 aspect-h-3">
+                        <div class="bg-dark-accent border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                            {% if item.content_type == 'movie' %}
+                            <i class="fas fa-film text-gray-500 text-4xl"></i>
+                            {% else %}
+                            <i class="fas fa-tv text-gray-500 text-4xl"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 class="font-semibold text-white-text text-sm truncate">Content {{ item.content_id }}</h3>
+                        <div class="flex items-center mt-1">
+                            <span class="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded">Completed</span>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <div class="flex flex-col gap-2">
+                            <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-sm transition duration-300">
+                                <i class="fas fa-plus mr-1"></i> Details
+                            </button>
+                            <button class="bg-dark-accent hover:bg-dark-card text-white-text px-3 py-1 rounded-lg font-medium text-sm transition duration-300 border border-dark-accent">
+                                <i class="fas fa-times mr-1"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="bg-dark-card rounded-2xl p-12 text-center shadow-lg">
+                <i class="fas fa-check-circle text-5xl text-gray-500 mb-6"></i>
+                <h2 class="text-2xl font-bold text-white-text mb-4">No Completed Items</h2>
+                <p class="text-light-text mb-6">Mark items as "Completed" when you finish watching them.</p>
+                <a href="{% url 'watchlist' %}?tab=watching" class="px-6 py-3 bg-electric-blue hover:bg-vibrant-teal text-white-text rounded-lg font-medium transition duration-300">
+                    <i class="fas fa-play-circle mr-2"></i> View Watching
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Dropped Tab -->
+        <div id="dropped" class="tab-panel hidden">
+            {% if dropped %}
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                {% for item in dropped %}
+                <div class="group relative bg-dark-card rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="aspect-w-2 aspect-h-3">
+                        <div class="bg-dark-accent border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                            {% if item.content_type == 'movie' %}
+                            <i class="fas fa-film text-gray-500 text-4xl"></i>
+                            {% else %}
+                            <i class="fas fa-tv text-gray-500 text-4xl"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 class="font-semibold text-white-text text-sm truncate">Content {{ item.content_id }}</h3>
+                        <div class="flex items-center mt-1">
+                            <span class="bg-red-500/20 text-red-400 text-xs px-2 py-1 rounded">Dropped</span>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <div class="flex flex-col gap-2">
+                            <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-sm transition duration-300">
+                                <i class="fas fa-plus mr-1"></i> Details
+                            </button>
+                            <button class="bg-dark-accent hover:bg-dark-card text-white-text px-3 py-1 rounded-lg font-medium text-sm transition duration-300 border border-dark-accent">
+                                <i class="fas fa-times mr-1"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="bg-dark-card rounded-2xl p-12 text-center shadow-lg">
+                <i class="fas fa-times-circle text-5xl text-gray-500 mb-6"></i>
+                <h2 class="text-2xl font-bold text-white-text mb-4">No Dropped Items</h2>
+                <p class="text-light-text mb-6">Move items to "Dropped" if you decide not to continue watching them.</p>
+                <a href="{% url 'search' %}" class="px-6 py-3 bg-electric-blue hover:bg-vibrant-teal text-white-text rounded-lg font-medium transition duration-300">
+                    <i class="fas fa-search mr-2"></i> Discover New Content
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab functionality
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+    
+    // Show the first tab by default
+    if (tabPanels.length > 0) {
+        tabPanels[0].classList.remove('hidden');
+        tabButtons[0].classList.add('text-electric-blue', 'border-electric-blue');
+        tabButtons[0].classList.remove('text-light-text', 'border-transparent');
+    }
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const tabId = this.dataset.tab;
+            
+            // Hide all panels
+            tabPanels.forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            
+            // Remove active class from all buttons
+            tabButtons.forEach(btn => {
+                btn.classList.remove('text-electric-blue', 'border-electric-blue');
+                btn.classList.add('text-light-text', 'border-transparent');
+            });
+            
+            // Show the selected panel
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            // Add active class to clicked button
+            this.classList.remove('text-light-text', 'border-transparent');
+            this.classList.add('text-electric-blue', 'border-electric-blue');
+        });
+    });
+});
+</script>
+{% endblock %}

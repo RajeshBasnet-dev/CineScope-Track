@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+
+{% block title %}Write Review - CineScope Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="flex items-center mb-8">
+        <a href="javascript:history.back()" class="mr-4 text-light-text hover:text-white-text transition duration-300">
+            <i class="fas fa-arrow-left text-xl"></i>
+        </a>
+        <h1 class="text-3xl font-bold text-white-text">Write Your Review</h1>
+    </div>
+    
+    <div class="bg-dark-card rounded-2xl shadow-lg overflow-hidden">
+        <!-- Movie/TV Header -->
+        <div class="bg-gradient-to-r from-dark-accent to-dark-card p-6">
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="md:w-1/4 flex justify-center">
+                    {% if content.poster_path %}
+                        <img src="https://image.tmdb.org/t/p/w500{{ content.poster_path }}" alt="{{ content.title }}" class="rounded-xl shadow-2xl w-32 h-48 md:w-40 md:h-56 object-cover">
+                    {% else %}
+                        <div class="bg-dark-bg border-2 border-dashed border-dark-accent rounded-xl w-32 h-48 md:w-40 md:h-56 flex items-center justify-center">
+                            <i class="fas fa-film text-gray-500 text-3xl"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="md:w-3/4">
+                    <h2 class="text-2xl font-bold text-white-text">{{ content.title }}</h2>
+                    <p class="text-light-text mt-1">
+                        {% if content.release_date %}
+                            {{ content.release_date|slice:":4" }}
+                        {% elif content.first_air_date %}
+                            {{ content.first_air_date|slice:":4" }}
+                        {% endif %}
+                    </p>
+                    {% if content.vote_average %}
+                    <div class="flex items-center mt-3">
+                        <div class="flex text-yellow-400 mr-2">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="text-light-text text-sm">{{ content.vote_average|floatformat:1 }}/10 from {{ content.vote_count }} ratings</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Review Form -->
+        <div class="p-6">
+            <form id="review-form">
+                <!-- Rating -->
+                <div class="mb-8">
+                    <label class="block text-white-text font-semibold mb-3">Your Rating <span class="text-red-500">*</span></label>
+                    <div class="flex items-center">
+                        <div class="flex text-2xl text-gray-400 mr-4" id="star-rating">
+                            {% for i in "1234567890" %}
+                                <i class="fas fa-star cursor-pointer hover:text-yellow-400 transition duration-300" data-rating="{{ forloop.counter }}"></i>
+                            {% endfor %}
+                        </div>
+                        <span id="rating-value" class="text-white-text font-medium">
+                            {% if user_rating %}{{ user_rating }}/10{% else %}Not rated{% endif %}
+                        </span>
+                        <input type="hidden" id="rating-input" name="rating" value="{{ user_rating|default:'' }}">
+                    </div>
+                </div>
+                
+                <!-- Review Title -->
+                <div class="mb-6">
+                    <label for="review-title" class="block text-white-text font-semibold mb-3">Review Title (Optional)</label>
+                    <input type="text" id="review-title" name="review_title" placeholder="e.g., &quot;A mind-bending masterpiece&quot;" value="{{ review_title }}"
+                           class="w-full bg-dark-accent border border-dark-accent rounded-lg px-4 py-3 text-white-text focus:outline-none focus:ring-2 focus:ring-electric-blue focus:border-transparent transition duration-300">
+                </div>
+                
+                <!-- Review Text -->
+                <div class="mb-8">
+                    <label for="review-text" class="block text-white-text font-semibold mb-3">Your Review <span class="text-red-500">*</span></label>
+                    <textarea id="review-text" name="review_text" rows="6" placeholder="Share your thoughts about the movie..." 
+                              class="w-full bg-dark-accent border border-dark-accent rounded-lg px-4 py-3 text-white-text focus:outline-none focus:ring-2 focus:ring-electric-blue focus:border-transparent transition duration-300">{{ review_text }}</textarea>
+                    <div class="flex justify-between mt-2">
+                        <span class="text-sm text-light-text">Min 50 characters</span>
+                        <span id="char-count" class="text-sm text-light-text">0/500</span>
+                    </div>
+                </div>
+                
+                <!-- Spoiler Toggle -->
+                <div class="mb-8">
+                    <label class="flex items-center cursor-pointer">
+                        <div class="relative">
+                            <input type="checkbox" class="sr-only" id="spoiler-toggle">
+                            <div class="block bg-dark-accent w-14 h-8 rounded-full"></div>
+                            <div class="dot absolute left-1 top-1 bg-white-text w-6 h-6 rounded-full transition duration-300"></div>
+                        </div>
+                        <div class="ml-3 text-white-text font-medium">Contains Spoilers</div>
+                    </label>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row justify-end gap-4">
+                    <button type="button" class="px-6 py-3 bg-dark-accent hover:bg-dark-card text-white-text rounded-lg font-medium transition duration-300 border border-dark-accent">
+                        Cancel
+                    </button>
+                    <button type="submit" id="submit-review" class="px-6 py-3 bg-electric-blue hover:bg-vibrant-teal text-white-text rounded-lg font-medium transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        Submit Review
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Star rating functionality
+    const stars = document.querySelectorAll('#star-rating i');
+    const ratingValue = document.getElementById('rating-value');
+    const ratingInput = document.getElementById('rating-input');
+    const reviewText = document.getElementById('review-text');
+    const charCount = document.getElementById('char-count');
+    const submitBtn = document.getElementById('submit-review');
+    const spoilerToggle = document.getElementById('spoiler-toggle');
+    
+    // Initialize rating if exists
+    const initialRating = parseInt(ratingInput.value) || 0;
+    if (initialRating > 0) {
+        highlightStars(initialRating);
+    }
+    
+    // Handle star clicks
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = parseInt(this.dataset.rating);
+            updateRating(rating);
+        });
+        
+        // Hover effect
+        star.addEventListener('mouseover', function() {
+            const rating = parseInt(this.dataset.rating);
+            highlightStars(rating);
+        });
+    });
+    
+    // Reset stars when mouse leaves rating area
+    document.getElementById('star-rating').addEventListener('mouseleave', function() {
+        const currentRating = parseInt(ratingInput.value) || 0;
+        highlightStars(currentRating);
+    });
+    
+    // Update character count
+    reviewText.addEventListener('input', function() {
+        const length = this.value.length;
+        charCount.textContent = `${length}/500`;
+        
+        // Enable/disable submit button based on requirements
+        checkFormValidity();
+    });
+    
+    // Initialize character count
+    reviewText.dispatchEvent(new Event('input'));
+    
+    // Spoiler toggle effect
+    spoilerToggle.addEventListener('change', function() {
+        const dot = this.previousElementSibling.querySelector('.dot');
+        if (this.checked) {
+            dot.style.transform = 'translateX(100%)';
+        } else {
+            dot.style.transform = 'translateX(0)';
+        }
+    });
+    
+    // Form submission
+    document.getElementById('review-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = {
+            content_id: "{{ content_id }}",
+            content_type: "{{ content_type }}",
+            rating: parseInt(ratingInput.value) || 0,
+            review_title: document.getElementById('review-title').value,
+            review_text: reviewText.value,
+            contains_spoilers: spoilerToggle.checked
+        };
+        
+        // Validate form
+        if (formData.rating === 0) {
+            alert('Please select a rating');
+            return;
+        }
+        
+        if (formData.review_text.length < 50) {
+            alert('Review must be at least 50 characters long');
+            return;
+        }
+        
+        // Submit review
+        fetch('{% url "submit_rating" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Review submitted successfully!');
+                // Redirect to the content page
+                if (formData.content_type === 'movie') {
+                    window.location.href = '{% url "movie_detail" content_id %}';
+                } else {
+                    window.location.href = '{% url "tv_show_detail" content_id %}';
+                }
+            } else {
+                alert('Error submitting review: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error submitting review');
+        });
+    });
+    
+    // Functions
+    function updateRating(rating) {
+        ratingInput.value = rating;
+        ratingValue.textContent = `${rating}/10`;
+        highlightStars(rating);
+        checkFormValidity();
+    }
+    
+    function highlightStars(rating) {
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.remove('text-gray-400');
+                star.classList.add('text-yellow-400');
+            } else {
+                star.classList.remove('text-yellow-400');
+                star.classList.add('text-gray-400');
+            }
+        });
+    }
+    
+    function checkFormValidity() {
+        const rating = parseInt(ratingInput.value) || 0;
+        const textLength = reviewText.value.length;
+        submitBtn.disabled = !(rating > 0 && textLength >= 50);
+    }
+});
+</script>
+
+<style>
+#spoiler-toggle:checked ~ .dot {
+    transform: translateX(100%);
+}
+</style>
+{% endblock %}

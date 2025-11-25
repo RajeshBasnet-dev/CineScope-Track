@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}Episode Tracker - CineScope Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-screen-xl mx-auto">
+    <div class="bg-dark-card rounded-2xl p-6 mb-8 shadow-lg">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row gap-6 mb-8">
+            {% if tv_show and tv_show.poster_path %}
+            <img src="https://image.tmdb.org/t/p/w185{{ tv_show.poster_path }}" alt="{{ tv_show.name }}" class="w-32 h-48 object-cover rounded-xl shadow-lg">
+            {% else %}
+            <div class="bg-dark-accent border-2 border-dashed rounded-xl w-32 h-48 flex items-center justify-center">
+                <i class="fas fa-tv text-gray-500 text-2xl"></i>
+            </div>
+            {% endif %}
+            <div>
+                <h1 class="text-3xl font-bold text-white-text mb-2">{{ tv_show.name }}</h1>
+                <p class="text-light-text mb-4">{{ tv_show.number_of_seasons }} Seasons</p>
+                <div class="flex items-center">
+                    <div class="w-full bg-dark-accent rounded-full h-2.5 mr-4">
+                        <div class="bg-electric-blue h-2.5 rounded-full" style="width: 33%"></div>
+                    </div>
+                    <span class="text-light-text text-sm">33% Completed</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Season Selector -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-white-text mb-4">Seasons</h2>
+            <div class="flex flex-wrap gap-2">
+                {% for season in tv_show.seasons %}
+                    {% if season.season_number > 0 %}
+                    <button class="season-tab px-4 py-2 bg-dark-accent hover:bg-dark-card text-light-text rounded-lg font-medium transition duration-300" data-season="{{ season.season_number }}">
+                        Season {{ season.season_number }}
+                    </button>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Episodes List -->
+        <div class="episodes-container">
+            {% for episode in episodes %}
+            <div class="episode-item border-b border-dark-accent py-6 flex items-start" data-season="{{ episode.season_number }}">
+                <input type="checkbox" 
+                       class="episode-checkbox h-5 w-5 mt-1 mr-4 rounded text-electric-blue focus:ring-electric-blue bg-dark-accent border-dark-accent"
+                       data-tv-id="{{ tv_show.id }}"
+                       data-season="{{ episode.season_number }}"
+                       data-episode="{{ episode.episode_number }}"
+                       {% if episode.season_number|add:0 in watched_episode_ids.0 and episode.episode_number|add:0 in watched_episode_ids.1 %}checked{% endif %}>
+                <div class="flex-1">
+                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                        <h3 class="font-semibold text-white-text">
+                            {{ episode.season_number }}x{{ episode.episode_number }} - {{ episode.name }}
+                        </h3>
+                        <span class="text-light-text text-sm">{{ episode.runtime }} min</span>
+                    </div>
+                    <p class="text-light-text text-sm">{{ episode.overview|truncatewords:30 }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Episode tracking functionality
+    const checkboxes = document.querySelectorAll('.episode-checkbox');
+    const seasonTabs = document.querySelectorAll('.season-tab');
+    const episodeItems = document.querySelectorAll('.episode-item');
+    
+    // Add event listeners to checkboxes
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const tvId = this.dataset.tvId;
+            const seasonNumber = this.dataset.season;
+            const episodeNumber = this.dataset.episode;
+            
+            // Send request to toggle episode watched status
+            fetch('{% url "toggle_episode_watched" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tv_id: tvId,
+                    season_number: parseInt(seasonNumber),
+                    episode_number: parseInt(episodeNumber)
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update UI to reflect change
+                    if (data.watched) {
+                        this.classList.add('text-electric-blue');
+                    } else {
+                        this.classList.remove('text-electric-blue');
+                    }
+                } else {
+                    // Revert checkbox state on error
+                    this.checked = !this.checked;
+                    alert('Error updating episode status');
+                }
+            })
+            .catch(error => {
+                // Revert checkbox state on error
+                this.checked = !this.checked;
+                console.error('Error:', error);
+            });
+        });
+    });
+    
+    // Season filtering
+    seasonTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const season = this.dataset.season;
+            
+            // Update active tab
+            seasonTabs.forEach(t => {
+                t.classList.remove('bg-electric-blue', 'text-white-text');
+                t.classList.add('bg-dark-accent', 'text-light-text');
+            });
+            this.classList.remove('bg-dark-accent', 'text-light-text');
+            this.classList.add('bg-electric-blue', 'text-white-text');
+            
+            // Show/hide episodes
+            episodeItems.forEach(item => {
+                if (item.dataset.season === season) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+    
+    // Click first season tab by default
+    if (seasonTabs.length > 0) {
+        seasonTabs[0].click();
+    }
+});
+</script>
+{% endblock %}

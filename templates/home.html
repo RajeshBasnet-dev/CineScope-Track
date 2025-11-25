@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - CineScope Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-8 mb-8 text-white">
+        <h1 class="text-4xl font-bold mb-4">Welcome to CineScope Tracker</h1>
+        <p class="text-xl mb-6">Track your movies and TV shows, get smart recommendations, and visualize your watching habits.</p>
+        {% if not user.is_authenticated %}
+            <div class="space-x-4">
+                <a href="{% url 'register' %}" class="bg-white text-blue-600 hover:bg-blue-100 font-bold py-2 px-6 rounded-full transition duration-300">Get Started</a>
+                <a href="{% url 'login' %}" class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-600 font-bold py-2 px-6 rounded-full transition duration-300">Sign In</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Features Section -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="text-blue-500 text-3xl mb-4">
+                <i class="fas fa-film"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Track Everything</h3>
+            <p class="text-gray-600">Keep track of movies and TV shows you've watched, plan to watch, or dropped.</p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="text-green-500 text-3xl mb-4">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Smart Recommendations</h3>
+            <p class="text-gray-600">Get personalized suggestions based on your viewing history and preferences.</p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="text-purple-500 text-3xl mb-4">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Analytics Dashboard</h3>
+            <p class="text-gray-600">Visualize your watching habits with professional-level statistics.</p>
+        </div>
+    </div>
+
+    <!-- Trending Content -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-4">Trending This Week</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <!-- Placeholder for trending movies/shows -->
+            <div class="bg-gray-200 border-2 border-dashed rounded-xl w-32 h-48"></div>
+            <div class="bg-gray-200 border-2 border-dashed rounded-xl w-32 h-48"></div>
+            <div class="bg-gray-200 border-2 border-dashed rounded-xl w-32 h-48"></div>
+            <div class="bg-gray-200 border-2 border-dashed rounded-xl w-32 h-48"></div>
+            <div class="bg-gray-200 border-2 border-dashed rounded-xl w-32 h-48"></div>
+            <div class="bg-gray-200 border-2 border-dashed rounded-xl w-32 h-48"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

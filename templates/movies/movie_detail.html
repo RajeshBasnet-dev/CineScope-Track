@@ -1,0 +1,597 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ movie.title }} - CineScope Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-screen-2xl mx-auto">
+    {% if movie %}
+    <!-- Hero Section with Premium Design -->
+    <div class="relative">
+        <!-- Backdrop Image -->
+        {% if movie.backdrop_path %}
+        <div class="absolute inset-0 bg-[url('https://image.tmdb.org/t/p/original{{ movie.backdrop_path }}')] bg-cover bg-center"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-dark-bg via-dark-bg/70 to-dark-bg/30"></div>
+        {% else %}
+        <div class="absolute inset-0 bg-gradient-to-r from-dark-bg to-dark-card"></div>
+        {% endif %}
+        
+        <!-- Content -->
+        <div class="relative z-10 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Poster -->
+                <div class="lg:w-1/3 flex justify-center lg:justify-start">
+                    <div class="relative group">
+                        {% if movie.poster_path %}
+                        <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}" 
+                             class="rounded-xl shadow-2xl w-64 md:w-80 lg:w-96 transition-transform duration-300 group-hover:scale-105">
+                        {% else %}
+                        <div class="bg-dark-accent border-2 border-dashed rounded-xl w-64 h-96 md:w-80 md:h-[45rem] lg:w-96 lg:h-[50rem] flex items-center justify-center">
+                            <i class="fas fa-film text-gray-500 text-6xl"></i>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Watch Status Badges -->
+                        <div class="absolute top-4 right-4 flex flex-col gap-2">
+                            <button id="favorite-btn" class="bg-dark-card/80 backdrop-blur-sm p-2 rounded-full text-light-text hover:text-red-500 transition-all duration-300 shadow-lg">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                            <button id="watchlist-btn" class="bg-dark-card/80 backdrop-blur-sm p-2 rounded-full text-light-text hover:text-electric-blue transition-all duration-300 shadow-lg">
+                                <i class="fas fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Movie Info -->
+                <div class="lg:w-2/3 text-white-text">
+                    <!-- Title and Release Year -->
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-2">{{ movie.title }}</h1>
+                    <div class="flex flex-wrap items-center gap-4 mb-6">
+                        <span class="text-xl text-light-text">{{ movie.release_date|slice:":4" }}</span>
+                        {% if movie.runtime %}
+                        <span class="text-light-text">• {{ movie.runtime }} min</span>
+                        {% endif %}
+                        <div class="flex items-center bg-yellow-500/20 px-3 py-1 rounded-full">
+                            <i class="fas fa-star text-yellow-400 mr-1"></i>
+                            <span class="font-semibold">{{ movie.vote_average|floatformat:1 }}</span>
+                            <span class="text-xs ml-1">/10</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Genres -->
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        {% for genre in movie.genres %}
+                        <span class="bg-electric-blue/20 text-electric-blue px-3 py-1 rounded-full text-sm">{{ genre.name }}</span>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Overview -->
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-semibold mb-3">Overview</h3>
+                        <p class="text-light-text leading-relaxed text-lg">{{ movie.overview }}</p>
+                    </div>
+                    
+                    <!-- Additional Metadata -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <!-- Director -->
+                        {% if crew %}
+                        {% for person in crew %}
+                        {% if person.job == "Director" %}
+                        <div>
+                            <h4 class="text-light-text text-sm uppercase tracking-wider mb-1">Director</h4>
+                            <p class="text-white-text font-medium">{{ person.name }}</p>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                        
+                        <!-- Language -->
+                        {% if movie.original_language %}
+                        <div>
+                            <h4 class="text-light-text text-sm uppercase tracking-wider mb-1">Language</h4>
+                            <p class="text-white-text font-medium">{{ movie.original_language|upper }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Budget -->
+                        {% if movie.budget and movie.budget > 0 %}
+                        <div>
+                            <h4 class="text-light-text text-sm uppercase tracking-wider mb-1">Budget</h4>
+                            <p class="text-white-text font-medium">${{ movie.budget|floatformat:0 }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Revenue -->
+                        {% if movie.revenue and movie.revenue > 0 %}
+                        <div>
+                            <h4 class="text-light-text text-sm uppercase tracking-wider mb-1">Revenue</h4>
+                            <p class="text-white-text font-medium">${{ movie.revenue|floatformat:0 }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Action Buttons - Floating Style -->
+                    <div class="flex flex-wrap gap-4">
+                        <button id="watchlist-toggle" class="flex items-center bg-electric-blue hover:bg-vibrant-teal text-white-text px-6 py-3 rounded-full font-medium transition duration-300 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-plus mr-2"></i> Add to Watchlist
+                        </button>
+                        <button id="mark-watched" class="flex items-center bg-dark-accent hover:bg-dark-card text-white-text px-6 py-3 rounded-full font-medium transition duration-300 border border-dark-accent shadow-lg hover:shadow-xl">
+                            <i class="fas fa-check mr-2"></i> Mark as Watched
+                        </button>
+                        <button id="favorite-toggle" class="flex items-center bg-dark-accent hover:bg-dark-card text-white-text px-6 py-3 rounded-full font-medium transition duration-300 border border-dark-accent shadow-lg hover:shadow-xl">
+                            <i class="fas fa-heart mr-2"></i> Favorite
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Already Watched Summary (if applicable) -->
+    {% if user.is_authenticated and user_watch_status == 'completed' %}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <div class="bg-gradient-to-r from-dark-card to-dark-accent rounded-2xl p-6 shadow-lg border border-dark-accent">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div>
+                    <h3 class="text-xl font-bold text-white-text mb-2">You've watched this movie!</h3>
+                    <div class="flex items-center gap-4">
+                        <span class="text-light-text">Watched on: <span class="text-white-text font-medium">December 15, 2024</span></span>
+                        <div class="flex items-center">
+                            <span class="text-light-text mr-2">Your rating:</span>
+                            <div class="flex text-yellow-400">
+                                {% for i in "1234567890" %}
+                                <i class="fas fa-star {% if forloop.counter <= user_rating %}text-yellow-400{% else %}text-gray-600{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                            <span class="text-white-text font-medium ml-2">{{ user_rating }}/10</span>
+                        </div>
+                    </div>
+                    {% if user_review %}
+                    <p class="text-light-text mt-3 italic">"{{ user_review }}"</p>
+                    {% endif %}
+                </div>
+                <button class="mt-4 md:mt-0 bg-dark-bg hover:bg-dark-card text-white-text px-4 py-2 rounded-lg font-medium transition duration-300 border border-dark-accent">
+                    Edit Review
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Trailer Section -->
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+        <div class="bg-dark-card rounded-2xl p-6 shadow-lg">
+            <h2 class="text-2xl font-bold text-white-text mb-6">Trailer</h2>
+            <div class="bg-dark-accent rounded-xl aspect-video flex items-center justify-center">
+                <div class="text-center">
+                    <i class="fas fa-play-circle text-6xl text-electric-blue mb-4 cursor-pointer hover:text-vibrant-teal transition duration-300"></i>
+                    <p class="text-light-text">Click to play trailer</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cast Section -->
+    {% if cast %}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+        <div class="bg-dark-card rounded-2xl p-6 shadow-lg">
+            <h2 class="text-2xl font-bold text-white-text mb-6">Cast</h2>
+            <div class="relative">
+                <div class="flex overflow-x-auto gap-6 pb-4 scrollbar-hide">
+                    {% for person in cast %}
+                    <div class="flex-shrink-0 w-32 text-center group">
+                        {% if person.profile_path %}
+                        <img src="https://image.tmdb.org/t/p/w185{{ person.profile_path }}" alt="{{ person.name }}" 
+                             class="w-full rounded-xl mb-3 shadow-md transition-transform duration-300 group-hover:scale-105">
+                        {% else %}
+                        <div class="bg-dark-accent border-2 border-dashed rounded-xl w-full h-48 flex items-center justify-center mb-3">
+                            <i class="fas fa-user text-gray-500 text-2xl"></i>
+                        </div>
+                        {% endif %}
+                        <p class="font-medium text-white-text text-sm truncate">{{ person.name }}</p>
+                        <p class="text-light-text text-xs truncate">{{ person.character }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Where to Watch -->
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+        <div class="bg-dark-card rounded-2xl p-6 shadow-lg">
+            <h2 class="text-2xl font-bold text-white-text mb-6">Where to Watch</h2>
+            <div class="flex flex-wrap gap-4">
+                <div class="bg-dark-accent rounded-xl p-4 flex items-center">
+                    <i class="fab fa-netflix text-red-600 text-2xl mr-3"></i>
+                    <div>
+                        <p class="text-white-text font-medium">Netflix</p>
+                        <p class="text-light-text text-sm">Subscription</p>
+                    </div>
+                </div>
+                <div class="bg-dark-accent rounded-xl p-4 flex items-center">
+                    <i class="fas fa-film text-blue-500 text-2xl mr-3"></i>
+                    <div>
+                        <p class="text-white-text font-medium">Amazon Prime</p>
+                        <p class="text-light-text text-sm">Subscription</p>
+                    </div>
+                </div>
+                <div class="bg-dark-accent rounded-xl p-4 flex items-center">
+                    <i class="fas fa-ticket-alt text-yellow-500 text-2xl mr-3"></i>
+                    <div>
+                        <p class="text-white-text font-medium">Apple TV</p>
+                        <p class="text-light-text text-sm">$14.99</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- More Like This Recommendations -->
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+        <div class="bg-dark-card rounded-2xl p-6 shadow-lg">
+            <h2 class="text-2xl font-bold text-white-text mb-6">More Like This</h2>
+            <div class="relative">
+                <div class="flex overflow-x-auto gap-6 pb-4 scrollbar-hide">
+                    <!-- Recommendation Cards -->
+                    {% for i in "1234567890" %}
+                    <div class="flex-shrink-0 w-48 group cursor-pointer">
+                        <div class="relative rounded-xl overflow-hidden mb-3">
+                            <div class="bg-dark-accent border-2 border-dashed rounded-xl w-full h-72 flex items-center justify-center">
+                                <i class="fas fa-film text-gray-500 text-3xl"></i>
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-80"></div>
+                            <div class="absolute bottom-0 left-0 right-0 p-3">
+                                <h3 class="font-semibold text-white-text text-sm truncate">Movie Title {{ i }}</h3>
+                                <div class="flex items-center mt-1">
+                                    <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                                    <span class="text-xs text-light-text">8.{{ i }}</span>
+                                    <span class="text-xs text-light-text mx-1">•</span>
+                                    <span class="text-xs text-light-text">202{{ i }}</span>
+                                </div>
+                            </div>
+                            <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <i class="fas fa-play text-white-text text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Reviews Section -->
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-12">
+        <div class="bg-dark-card rounded-2xl p-6 shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-white-text">Reviews</h2>
+                <div class="flex gap-2">
+                    <button class="px-4 py-2 bg-dark-accent hover:bg-dark-card text-white-text rounded-lg text-sm font-medium transition duration-300 border border-dark-accent">
+                        Newest
+                    </button>
+                    <button class="px-4 py-2 bg-dark-accent hover:bg-dark-card text-light-text rounded-lg text-sm font-medium transition duration-300 border border-dark-accent">
+                        Highest Rated
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Add Review Button -->
+            {% if user.is_authenticated %}
+            <div class="mb-8">
+                <button class="flex items-center text-electric-blue hover:text-vibrant-teal font-medium">
+                    <i class="fas fa-plus mr-2"></i> Add Your Review
+                </button>
+            </div>
+            {% endif %}
+            
+            <!-- Reviews List -->
+            <div class="space-y-6">
+                <!-- Sample Review 1 -->
+                <div class="border-b border-dark-accent pb-6 last:border-0 last:pb-0">
+                    <div class="flex items-start">
+                        <div class="bg-electric-blue/10 p-3 rounded-full mr-4">
+                            <span class="text-electric-blue font-bold">JD</span>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex justify-between">
+                                <h3 class="font-semibold text-white-text">John Doe</h3>
+                                <span class="text-light-text text-sm">2 days ago</span>
+                            </div>
+                            <div class="flex items-center mt-1">
+                                <div class="flex text-yellow-400 mr-2">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="text-white-text font-medium">10/10</span>
+                            </div>
+                            <p class="text-light-text mt-3">This movie is an absolute masterpiece! The cinematography, acting, and storytelling are all top-notch. I was completely captivated from start to finish.</p>
+                            <div class="flex gap-4 mt-3">
+                                <button class="text-light-text text-sm hover:text-white-text transition duration-300">
+                                    <i class="fas fa-thumbs-up mr-1"></i> 42
+                                </button>
+                                <button class="text-light-text text-sm hover:text-white-text transition duration-300">
+                                    <i class="fas fa-comment mr-1"></i> Reply
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sample Review 2 -->
+                <div class="border-b border-dark-accent pb-6 last:border-0 last:pb-0">
+                    <div class="flex items-start">
+                        <div class="bg-vibrant-teal/10 p-3 rounded-full mr-4">
+                            <span class="text-vibrant-teal font-bold">AS</span>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex justify-between">
+                                <h3 class="font-semibold text-white-text">Alice Smith</h3>
+                                <span class="text-light-text text-sm">1 week ago</span>
+                            </div>
+                            <div class="flex items-center mt-1">
+                                <div class="flex text-yellow-400 mr-2">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="text-white-text font-medium">8/10</span>
+                            </div>
+                            <p class="text-light-text mt-3">Great movie with excellent performances. The plot was engaging, though I felt the ending was a bit rushed. Still highly recommended!</p>
+                            <div class="flex gap-4 mt-3">
+                                <button class="text-light-text text-sm hover:text-white-text transition duration-300">
+                                    <i class="fas fa-thumbs-up mr-1"></i> 28
+                                </button>
+                                <button class="text-light-text text-sm hover:text-white-text transition duration-300">
+                                    <i class="fas fa-comment mr-1"></i> Reply
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-dark-card rounded-2xl p-12 text-center shadow-lg">
+            <i class="fas fa-exclamation-circle text-5xl text-gray-500 mb-6"></i>
+            <h2 class="text-2xl font-bold text-white-text mb-4">Movie Not Found</h2>
+            <p class="text-light-text mb-6">Sorry, we couldn't find the movie you're looking for.</p>
+            <a href="{% url 'movies_home' %}" class="px-6 py-3 bg-electric-blue hover:bg-vibrant-teal text-white-text rounded-lg font-medium transition duration-300">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Home
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get movie ID from data attribute
+    const movieId = "{{ movie.id }}";
+    const contentType = "movie";
+    
+    // Watchlist toggle functionality
+    const watchlistBtn = document.getElementById('watchlist-toggle');
+    const watchlistIconBtn = document.getElementById('watchlist-btn');
+    
+    // Check initial watchlist status
+    function updateWatchlistUI(isInWatchlist) {
+        if (watchlistBtn) {
+            if (isInWatchlist) {
+                watchlistBtn.innerHTML = '<i class="fas fa-check mr-2"></i> In Watchlist';
+                watchlistBtn.classList.remove('bg-electric-blue', 'hover:bg-vibrant-teal');
+                watchlistBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+            } else {
+                watchlistBtn.innerHTML = '<i class="fas fa-plus mr-2"></i> Add to Watchlist';
+                watchlistBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                watchlistBtn.classList.add('bg-electric-blue', 'hover:bg-vibrant-teal');
+            }
+        }
+        
+        if (watchlistIconBtn) {
+            if (isInWatchlist) {
+                watchlistIconBtn.innerHTML = '<i class="fas fa-bookmark text-electric-blue"></i>';
+            } else {
+                watchlistIconBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
+            }
+        }
+    }
+    
+    // Initialize watchlist button state
+    // We'll use a data attribute to pass the initial state
+    const initialWatchStatus = document.getElementById('watchlist-data').dataset.watchStatus;
+    if (initialWatchStatus) {
+        updateWatchlistUI(true);
+    }
+    
+    if (watchlistBtn) {
+        watchlistBtn.addEventListener('click', function() {
+            const isInWatchlist = this.classList.contains('bg-green-600');
+            
+            if (isInWatchlist) {
+                // Remove from watchlist
+                fetch('{% url "remove_from_watchlist" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify({
+                        content_id: movieId,
+                        content_type: contentType
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateWatchlistUI(false);
+                    } else {
+                        alert('Error removing from watchlist');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error removing from watchlist');
+                });
+            } else {
+                // Add to watchlist
+                fetch('{% url "add_to_watchlist" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify({
+                        content_id: movieId,
+                        content_type: contentType,
+                        status: 'plan_to_watch'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateWatchlistUI(true);
+                    } else {
+                        alert('Error adding to watchlist');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error adding to watchlist');
+                });
+            }
+        });
+    }
+    
+    if (watchlistIconBtn) {
+        watchlistIconBtn.addEventListener('click', function() {
+            const mainBtn = document.getElementById('watchlist-toggle');
+            if (mainBtn) {
+                mainBtn.click(); // Trigger the main button click
+            }
+        });
+    }
+    
+    // Mark as watched functionality
+    const markWatchedBtn = document.getElementById('mark-watched');
+    
+    // Check initial watched status
+    function updateWatchedUI(isWatched) {
+        if (markWatchedBtn) {
+            if (isWatched) {
+                markWatchedBtn.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Watched';
+                markWatchedBtn.classList.remove('bg-dark-accent', 'hover:bg-dark-card');
+                markWatchedBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+            } else {
+                markWatchedBtn.innerHTML = '<i class="fas fa-check mr-2"></i> Mark as Watched';
+                markWatchedBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                markWatchedBtn.classList.add('bg-dark-accent', 'hover:bg-dark-card');
+            }
+        }
+    }
+    
+    // Initialize watched button state
+    const initialCompletedStatus = document.getElementById('watchlist-data').dataset.watchStatus === 'completed';
+    if (initialCompletedStatus) {
+        updateWatchedUI(true);
+    }
+    
+    if (markWatchedBtn) {
+        markWatchedBtn.addEventListener('click', function() {
+            const isWatched = this.classList.contains('bg-green-600');
+            const newStatus = isWatched ? 'plan_to_watch' : 'completed';
+            
+            fetch('{% url "move_watchlist_item" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    content_id: movieId,
+                    content_type: contentType,
+                    new_status: newStatus
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateWatchedUI(!isWatched);
+                    // Also update the watchlist button if needed
+                    if (!isWatched) {
+                        updateWatchlistUI(true);
+                    }
+                } else {
+                    alert('Error updating watch status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating watch status');
+            });
+        });
+    }
+    
+    // Favorite toggle functionality
+    const favoriteBtn = document.getElementById('favorite-toggle');
+    const favoriteIconBtn = document.getElementById('favorite-btn');
+    
+    // For now, we'll implement a simple toggle without backend integration
+    // In a real app, this would connect to a favorites API
+    
+    if (favoriteBtn) {
+        favoriteBtn.addEventListener('click', function() {
+            const isFavorited = this.classList.contains('text-red-500');
+            if (isFavorited) {
+                this.innerHTML = '<i class="fas fa-heart mr-2"></i> Favorite';
+                this.classList.remove('text-red-500');
+            } else {
+                this.innerHTML = '<i class="fas fa-heart mr-2"></i> Favorited';
+                this.classList.add('text-red-500');
+            }
+        });
+    }
+    
+    if (favoriteIconBtn) {
+        favoriteIconBtn.addEventListener('click', function() {
+            const mainBtn = document.getElementById('favorite-toggle');
+            if (mainBtn) {
+                mainBtn.click(); // Trigger the main button click
+            }
+        });
+    }
+    
+    // Add animation to favorite button
+    if (favoriteIconBtn) {
+        favoriteIconBtn.addEventListener('click', function() {
+            this.classList.add('animate-pulse');
+            setTimeout(() => {
+                this.classList.remove('animate-pulse');
+            }, 600);
+        });
+    }
+});
+</script>
+
+<!-- Hidden data for JavaScript -->
+<div id="watchlist-data" data-watch-status="{{ user_watch_status }}" style="display: none;"></div>
+
+{% endblock %}

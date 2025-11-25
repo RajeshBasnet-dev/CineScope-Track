@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CineScope Tracker{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#0F172A',
+                        'dark-card': '#1E293B',
+                        'dark-accent': '#334155',
+                        'electric-blue': '#3B82F6',
+                        'vibrant-teal': '#06B6D4',
+                        'light-text': '#E2E8F0',
+                        'white-text': '#F8FAFC'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-dark-bg text-light-text font-sans">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-dark-bg/90 backdrop-blur-sm border-b border-dark-accent shadow-lg">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold text-white-text tracking-tight">
+                        <a href="{% url 'home' %}" class="flex items-center">
+                            <i class="fas fa-film text-electric-blue mr-2"></i>
+                            <span class="bg-gradient-to-r from-electric-blue to-vibrant-teal bg-clip-text text-transparent">CineScope</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="{% url 'home' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:text-white-text transition duration-300 {% if request.resolver_match.url_name == 'movies_home' %}text-electric-blue{% else %}text-light-text{% endif %}">Home</a>
+                    <a href="{% url 'search' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:text-white-text transition duration-300 {% if request.resolver_match.url_name == 'search' %}text-electric-blue{% else %}text-light-text{% endif %}">Search</a>
+                    <a href="{% url 'watchlist' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:text-white-text transition duration-300 {% if request.resolver_match.url_name == 'watchlist' %}text-electric-blue{% else %}text-light-text{% endif %}">Watchlists</a>
+                    <a href="{% url 'recommendations' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:text-white-text transition duration-300 {% if request.resolver_match.url_name == 'recommendations' %}text-electric-blue{% else %}text-light-text{% endif %}">Recommendations</a>
+                    <a href="{% url 'dashboard' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:text-white-text transition duration-300 {% if request.resolver_match.url_name == 'dashboard' %}text-electric-blue{% else %}text-light-text{% endif %}">Dashboard</a>
+                </div>
+                
+                <div class="flex items-center">
+                    {% if user.is_authenticated %}
+                        <div class="relative group">
+                            <button class="flex items-center text-sm rounded-full focus:outline-none">
+                                <div class="h-8 w-8 rounded-full bg-electric-blue flex items-center justify-center text-white-text font-bold">
+                                    {{ user.username|first|upper }}
+                                </div>
+                            </button>
+                            <div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-dark-card ring-1 ring-black ring-opacity-5 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                                <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm hover:bg-dark-accent transition duration-300">Profile</a>
+                                <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm hover:bg-dark-accent transition duration-300">Sign out</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="flex space-x-2">
+                            <a href="{% url 'login' %}" class="px-4 py-2 text-sm font-medium text-electric-blue hover:text-vibrant-teal transition duration-300">Sign in</a>
+                            <a href="{% url 'register' %}" class="px-4 py-2 text-sm font-medium bg-electric-blue hover:bg-vibrant-teal text-white-text rounded-md transition duration-300">Sign up</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+            {% for message in messages %}
+                <div class="bg-{{ message.tags }}-500/20 border border-{{ message.tags }}-400 text-{{ message.tags }}-300 px-4 py-3 rounded-lg mb-4" role="alert">
+                    <span class="block sm:inline">{{ message }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% csrf_token %}
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark-card border-t border-dark-accent mt-12">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="flex justify-center md:justify-start">
+                    <div class="text-xl font-bold text-white-text">
+                        <a href="{% url 'home' %}" class="flex items-center">
+                            <i class="fas fa-film text-electric-blue mr-2"></i>
+                            <span class="bg-gradient-to-r from-electric-blue to-vibrant-teal bg-clip-text text-transparent">CineScope</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="mt-8 md:mt-0 md:order-1">
+                    <p class="text-center text-sm text-light-text">
+                        &copy; 2025 CineScope Tracker. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

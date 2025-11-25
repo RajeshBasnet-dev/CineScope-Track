@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - CineScope Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-screen-xl mx-auto">
+    <div class="min-h-screen flex items-center justify-center py-12">
+        <div class="bg-dark-card rounded-2xl shadow-xl p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="mx-auto bg-vibrant-teal/10 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4">
+                    <i class="fas fa-user-plus text-vibrant-teal text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white-text">Create Account</h2>
+                <p class="text-light-text mt-2">Join CineScope to track your favorite movies and TV shows</p>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-6">
+                    <label for="{{ form.username.id_for_label }}" class="block text-light-text text-sm font-medium mb-2">Username</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-500"></i>
+                        </div>
+                        {{ form.username }}
+                    </div>
+                    {% if form.username.errors %}
+                        <p class="text-red-400 text-xs mt-2">{{ form.username.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-6">
+                    <label for="{{ form.email.id_for_label }}" class="block text-light-text text-sm font-medium mb-2">Email</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope text-gray-500"></i>
+                        </div>
+                        {{ form.email }}
+                    </div>
+                    {% if form.email.errors %}
+                        <p class="text-red-400 text-xs mt-2">{{ form.email.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-6">
+                    <label for="{{ form.password1.id_for_label }}" class="block text-light-text text-sm font-medium mb-2">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-500"></i>
+                        </div>
+                        {{ form.password1 }}
+                    </div>
+                    {% if form.password1.errors %}
+                        <p class="text-red-400 text-xs mt-2">{{ form.password1.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-6">
+                    <label for="{{ form.password2.id_for_label }}" class="block text-light-text text-sm font-medium mb-2">Confirm Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-500"></i>
+                        </div>
+                        {{ form.password2 }}
+                    </div>
+                    {% if form.password2.errors %}
+                        <p class="text-red-400 text-xs mt-2">{{ form.password2.errors }}</p>
+                    {% endif %}
+                </div>
+                
+                <button type="submit" class="w-full bg-electric-blue hover:bg-vibrant-teal text-white-text py-3 px-4 rounded-lg font-medium transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-electric-blue">
+                    Create Account
+                </button>
+            </form>
+            
+            <div class="mt-8 text-center">
+                <p class="text-light-text">
+                    Already have an account?
+                    <a href="{% url 'login' %}" class="font-medium text-electric-blue hover:text-vibrant-teal transition duration-300">Sign in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+        width: 100%;
+        padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+        background-color: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 0.5rem;
+        color: #f8fafc;
+        transition: all 0.3s ease;
+    }
+    
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+</style>
+{% endblock %}

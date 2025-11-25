@@ -1,0 +1,524 @@
+{% extends 'base.html' %}
+
+{% block title %}Recommendations - CineScope Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-screen-xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-white-text">💡 What to Watch Next</h1>
+        <button id="refresh-recommendations" class="px-4 py-2 bg-dark-accent hover:bg-dark-card text-white-text rounded-lg font-medium transition duration-300 border border-dark-accent flex items-center">
+            <i class="fas fa-sync-alt mr-2"></i> Refresh
+        </button>
+    </div>
+    
+    <p class="text-light-text mb-8">Personalized picks based on your viewing history</p>
+    
+    <!-- Because You Loved -->
+    <div class="bg-dark-card rounded-2xl p-6 mb-8 shadow-lg">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-white-text">🎯 Because You Loved "Inception"</h2>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+            <!-- Recommendation 1 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">Shutter Island</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">8.2</span>
+                    </div>
+                    <div class="text-xs text-electric-blue mt-1">97% Match</div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Recommendation 2 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">Memento</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">8.4</span>
+                    </div>
+                    <div class="text-xs text-electric-blue mt-1">95% Match</div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Recommendation 3 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">The Prestige</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">8.5</span>
+                    </div>
+                    <div class="text-xs text-electric-blue mt-1">94% Match</div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Recommendation 4 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">Tenet</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">7.3</span>
+                    </div>
+                    <div class="text-xs text-electric-blue mt-1">89% Match</div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Trending in Sci-Fi -->
+    <div class="bg-dark-card rounded-2xl p-6 mb-8 shadow-lg">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-white-text">🔥 Trending in Sci-Fi (Your Favorite Genre)</h2>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+            <!-- Trending Item 1 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">Dune</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">8.0</span>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Trending Item 2 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">Blade Runner 2049</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">8.0</span>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Trending Item 3 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">Arrival</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">7.9</span>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Trending Item 4 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">Ex Machina</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">7.7</span>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- New Releases -->
+    <div class="bg-dark-card rounded-2xl p-6 mb-8 shadow-lg">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-white-text">🆕 New Releases You Might Like</h2>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+            <!-- New Release 1 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">Top Gun: Maverick</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">8.3</span>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- New Release 2 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">Spider-Man: No Way Home</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">8.2</span>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- New Release 3 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">The Batman</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">7.8</span>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- New Release 4 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">Doctor Strange in the Multiverse of Madness</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">6.9</span>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hidden Gems -->
+    <div class="bg-dark-card rounded-2xl p-6 mb-8 shadow-lg">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-white-text">💎 Hidden Gems</h2>
+            <p class="text-light-text text-sm">Highly rated but less watched</p>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+            <!-- Hidden Gem 1 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">The Fall</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">9.1</span>
+                    </div>
+                    <div class="text-xs text-light-text mt-1">12K views</div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Hidden Gem 2 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">A Ghost Story</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">8.9</span>
+                    </div>
+                    <div class="text-xs text-light-text mt-1">8K views</div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Hidden Gem 3 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">Coherence</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">8.8</span>
+                    </div>
+                    <div class="text-xs text-light-text mt-1">15K views</div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Hidden Gem 4 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">The Invitation</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">8.7</span>
+                    </div>
+                    <div class="text-xs text-light-text mt-1">9K views</div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Complete Your Collection -->
+    <div class="bg-dark-card rounded-2xl p-6 shadow-lg">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-white-text">🎬 Complete Your Collection</h2>
+            <p class="text-light-text text-sm">Sequels, prequels, and related content</p>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+            <!-- Collection Item 1 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">The Matrix Reloaded</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">7.2</span>
+                    </div>
+                    <div class="text-xs text-light-text mt-1">Sequel</div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Collection Item 2 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">The Matrix Revolutions</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">6.8</span>
+                    </div>
+                    <div class="text-xs text-light-text mt-1">Sequel</div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Collection Item 3 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">The Matrix Resurrections</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">5.7</span>
+                    </div>
+                    <div class="text-xs text-light-text mt-1">Sequel</div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Collection Item 4 -->
+            <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="aspect-w-2 aspect-h-3">
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="font-semibold text-white-text text-sm truncate">John Wick</h3>
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                        <span class="text-xs text-light-text">7.4</span>
+                    </div>
+                    <div class="text-xs text-light-text mt-1">Related</div>
+                </div>
+                <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-3 py-1 rounded-lg font-medium text-xs transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('refresh-recommendations').addEventListener('click', function() {
+    this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Refreshing...';
+    this.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+        this.innerHTML = '<i class="fas fa-sync-alt mr-2"></i> Refresh';
+        this.disabled = false;
+        alert('Recommendations refreshed!');
+    }, 1500);
+});
+</script>
+{% endblock %}

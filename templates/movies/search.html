@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Results - CineScope Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-screen-xl mx-auto">
+    <!-- Search Bar -->
+    <div class="bg-dark-card rounded-2xl p-6 mb-8 shadow-lg">
+        <form method="get" action="{% url 'search' %}">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-grow">
+                    <input type="text" name="q" value="{{ query }}" placeholder="Search for movies or TV shows..." class="w-full px-6 py-4 bg-dark-accent border border-dark-accent rounded-xl text-white-text focus:outline-none focus:ring-2 focus:ring-electric-blue focus:border-transparent transition duration-300">
+                </div>
+                <button type="submit" class="px-8 py-4 bg-electric-blue hover:bg-vibrant-teal text-white-text font-medium rounded-xl transition duration-300 flex items-center justify-center">
+                    <i class="fas fa-search mr-2"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Search Results -->
+    {% if query %}
+    <div class="bg-dark-card rounded-2xl p-6 mb-8 shadow-lg">
+        <h2 class="text-2xl font-bold text-white-text mb-6">Search Results for "{{ query }}"</h2>
+        
+        <!-- Movies Section -->
+        <div class="mb-10">
+            <h3 class="text-xl font-semibold text-white-text mb-4 flex items-center">
+                <i class="fas fa-film text-electric-blue mr-2"></i> Movies
+            </h3>
+            {% if movies %}
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                {% for movie in movies %}
+                <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    {% if movie.poster_path %}
+                    <div class="aspect-w-2 aspect-h-3">
+                        <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}" class="w-full h-80 object-cover">
+                    </div>
+                    {% else %}
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-film text-gray-500 text-4xl"></i>
+                    </div>
+                    {% endif %}
+                    <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 class="font-semibold text-white-text text-sm truncate">{{ movie.title }}</h3>
+                        <div class="flex items-center mt-1">
+                            <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                            <span class="text-xs text-light-text">{{ movie.vote_average|floatformat:1 }}</span>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <a href="{% url 'movie_detail' movie.id %}" class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-4 py-2 rounded-lg font-medium text-sm transition duration-300">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12">
+                <i class="fas fa-film text-4xl text-gray-500 mb-4"></i>
+                <p class="text-light-text">No movies found for "{{ query }}".</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- TV Shows Section -->
+        <div>
+            <h3 class="text-xl font-semibold text-white-text mb-4 flex items-center">
+                <i class="fas fa-tv text-electric-blue mr-2"></i> TV Shows
+            </h3>
+            {% if tv_shows %}
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                {% for show in tv_shows %}
+                <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    {% if show.poster_path %}
+                    <div class="aspect-w-2 aspect-h-3">
+                        <img src="https://image.tmdb.org/t/p/w500{{ show.poster_path }}" alt="{{ show.name }}" class="w-full h-80 object-cover">
+                    </div>
+                    {% else %}
+                    <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-80 flex items-center justify-center">
+                        <i class="fas fa-tv text-gray-500 text-4xl"></i>
+                    </div>
+                    {% endif %}
+                    <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 class="font-semibold text-white-text text-sm truncate">{{ show.name }}</h3>
+                        <div class="flex items-center mt-1">
+                            <i class="fas fa-star text-yellow-400 text-xs mr-1"></i>
+                            <span class="text-xs text-light-text">{{ show.vote_average|floatformat:1 }}</span>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <a href="{% url 'tv_show_detail' show.id %}" class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-4 py-2 rounded-lg font-medium text-sm transition duration-300">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12">
+                <i class="fas fa-tv text-4xl text-gray-500 mb-4"></i>
+                <p class="text-light-text">No TV shows found for "{{ query }}".</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="bg-dark-card rounded-2xl p-12 text-center shadow-lg">
+        <i class="fas fa-search text-5xl text-gray-500 mb-6"></i>
+        <h2 class="text-2xl font-bold text-white-text mb-4">Search for Movies & TV Shows</h2>
+        <p class="text-light-text max-w-2xl mx-auto">Find your favorite movies and TV shows by entering keywords in the search bar above. Discover new content based on your interests.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

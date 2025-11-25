@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+
+{% block title %}@username's Profile - CineScope Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-screen-xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-white-text">@username's Profile</h1>
+        <div class="flex space-x-2">
+            <button class="px-4 py-2 bg-dark-accent hover:bg-dark-card text-white-text rounded-lg font-medium transition duration-300 border border-dark-accent">
+                <i class="fas fa-user-plus mr-2"></i> Follow
+            </button>
+            <button class="px-4 py-2 bg-dark-accent hover:bg-dark-card text-white-text rounded-lg font-medium transition duration-300 border border-dark-accent">
+                <i class="fas fa-share-alt mr-2"></i> Share
+            </button>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Profile Info -->
+        <div class="lg:col-span-1">
+            <div class="bg-dark-card rounded-2xl shadow-lg p-6">
+                <div class="text-center">
+                    <div class="mx-auto bg-electric-blue/10 p-4 rounded-full w-24 h-24 flex items-center justify-center mb-6">
+                        <span class="text-3xl font-bold text-electric-blue">U</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white-text">@username</h2>
+                    <p class="text-light-text mt-2">Member since: Jan 2024</p>
+                    <p class="text-light-text italic mt-3">"Movie enthusiast & binge-watcher 🎬🍿"</p>
+                    
+                    <div class="mt-6 bg-dark-accent rounded-xl p-4">
+                        <div class="flex justify-center space-x-6">
+                            <div class="text-center">
+                                <p class="text-white-text font-bold">142</p>
+                                <p class="text-light-text text-sm">Movies</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-white-text font-bold">38</p>
+                                <p class="text-light-text text-sm">TV Shows</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-white-text font-bold">487</p>
+                                <p class="text-light-text text-sm">Hours</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex justify-center space-x-6">
+                        <div class="text-center">
+                            <p class="text-white-text font-bold">245</p>
+                            <p class="text-light-text text-sm">Following</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-white-text font-bold">1.2K</p>
+                            <p class="text-light-text text-sm">Followers</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+            <!-- Tabs -->
+            <div class="flex border-b border-dark-accent mb-8">
+                <button class="tab-button px-6 py-3 font-medium text-white-text border-b-2 border-electric-blue">
+                    Overview
+                </button>
+                <button class="tab-button px-6 py-3 font-medium text-light-text border-b-2 border-transparent hover:text-white-text transition duration-300">
+                    Lists
+                </button>
+                <button class="tab-button px-6 py-3 font-medium text-light-text border-b-2 border-transparent hover:text-white-text transition duration-300">
+                    Reviews
+                </button>
+                <button class="tab-button px-6 py-3 font-medium text-light-text border-b-2 border-transparent hover:text-white-text transition duration-300">
+                    Activity
+                </button>
+            </div>
+            
+            <!-- Stats at a Glance -->
+            <div class="bg-dark-card rounded-2xl shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold text-white-text mb-6">📊 Stats at a Glance</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-center">
+                        <span class="text-light-text">• Average Rating:</span>
+                        <span class="ml-2 flex items-center">
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <span class="text-white-text font-medium ml-1">7.8/10</span>
+                        </span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-light-text">• Top Genre:</span>
+                        <span class="ml-2 text-white-text font-medium">Drama (32%)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-light-text">• Favorite Decade:</span>
+                        <span class="ml-2 text-white-text font-medium">2010s</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-light-text">• Current Streak:</span>
+                        <span class="ml-2 flex items-center">
+                            <i class="fas fa-fire text-orange-500"></i>
+                            <span class="text-white-text font-medium ml-1">7 days</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Achievements -->
+            <div class="bg-dark-card rounded-2xl shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold text-white-text mb-6">🎖️ Achievements</h2>
+                <div class="flex flex-wrap gap-3">
+                    <span class="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-full text-sm flex items-center">
+                        <i class="fas fa-medal mr-2"></i> 🏅
+                    </span>
+                    <span class="px-4 py-2 bg-purple-500/20 text-purple-300 rounded-full text-sm flex items-center">
+                        <i class="fas fa-ticket-alt mr-2"></i> 🎬
+                    </span>
+                    <span class="px-4 py-2 bg-green-500/20 text-green-300 rounded-full text-sm flex items-center">
+                        <i class="fas fa-tv mr-2"></i> 📺
+                    </span>
+                    <span class="px-4 py-2 bg-yellow-500/20 text-yellow-300 rounded-full text-sm flex items-center">
+                        <i class="fas fa-clock mr-2"></i> ⏰
+                    </span>
+                    <span class="px-4 py-2 bg-red-500/20 text-red-300 rounded-full text-sm flex items-center">
+                        <i class="fas fa-fire mr-2"></i> 🔥
+                    </span>
+                    <span class="px-4 py-2 bg-indigo-500/20 text-indigo-300 rounded-full text-sm flex items-center">
+                        <i class="fas fa-star mr-2"></i> ⭐
+                    </span>
+                    <span class="px-4 py-2 bg-pink-500/20 text-pink-300 rounded-full text-sm flex items-center">
+                        <i class="fas fa-pen mr-2"></i> 📝
+                    </span>
+                    <span class="px-4 py-2 bg-teal-500/20 text-teal-300 rounded-full text-sm flex items-center">
+                        <i class="fas fa-users mr-2"></i> 👥
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Recent Reviews -->
+            <div class="bg-dark-card rounded-2xl shadow-lg p-6 mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-white-text">📝 Recent Reviews (12)</h2>
+                    <a href="#" class="text-electric-blue hover:text-vibrant-teal text-sm font-medium transition duration-300">
+                        View All <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+                
+                <!-- Review 1 -->
+                <div class="border-b border-dark-accent pb-6 mb-6 last:border-0 last:pb-0 last:mb-0">
+                    <div class="flex">
+                        <div class="flex-shrink-0 mr-4">
+                            <div class="bg-dark-accent border-2 border-dashed rounded-xl w-16 h-24 flex items-center justify-center">
+                                <i class="fas fa-film text-gray-500"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex justify-between">
+                                <h3 class="font-semibold text-white-text">Inception</h3>
+                                <span class="text-light-text text-sm">2d ago</span>
+                            </div>
+                            <div class="flex items-center mt-1">
+                                <div class="flex text-yellow-400 mr-2">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="text-white-text font-medium">10/10</span>
+                            </div>
+                            <p class="text-light-text mt-2 text-sm">"A mind-bending masterpiece that redefined science fiction cinema with its intricate plot and stunning visuals..."</p>
+                            <div class="flex items-center mt-3 text-sm">
+                                <span class="text-light-text mr-4"><i class="fas fa-thumbs-up text-green-500 mr-1"></i> 45</span>
+                                <span class="text-light-text"><i class="fas fa-comment text-blue-500 mr-1"></i> 12</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Review 2 -->
+                <div class="border-b border-dark-accent pb-6 mb-6 last:border-0 last:pb-0 last:mb-0">
+                    <div class="flex">
+                        <div class="flex-shrink-0 mr-4">
+                            <div class="bg-dark-accent border-2 border-dashed rounded-xl w-16 h-24 flex items-center justify-center">
+                                <i class="fas fa-film text-gray-500"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex justify-between">
+                                <h3 class="font-semibold text-white-text">The Dark Knight</h3>
+                                <span class="text-light-text text-sm">1w ago</span>
+                            </div>
+                            <div class="flex items-center mt-1">
+                                <div class="flex text-yellow-400 mr-2">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <span class="text-white-text font-medium">9.5/10</span>
+                            </div>
+                            <p class="text-light-text mt-2 text-sm">"Heath Ledger's iconic performance as the Joker elevates this superhero film to Shakespearean heights..."</p>
+                            <div class="flex items-center mt-3 text-sm">
+                                <span class="text-light-text mr-4"><i class="fas fa-thumbs-up text-green-500 mr-1"></i> 128</span>
+                                <span class="text-light-text"><i class="fas fa-comment text-blue-500 mr-1"></i> 34</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Review 3 -->
+                <div class="border-b border-dark-accent pb-6 mb-6 last:border-0 last:pb-0 last:mb-0">
+                    <div class="flex">
+                        <div class="flex-shrink-0 mr-4">
+                            <div class="bg-dark-accent border-2 border-dashed rounded-xl w-16 h-24 flex items-center justify-center">
+                                <i class="fas fa-film text-gray-500"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex justify-between">
+                                <h3 class="font-semibold text-white-text">Parasite</h3>
+                                <span class="text-light-text text-sm">2w ago</span>
+                            </div>
+                            <div class="flex items-center mt-1">
+                                <div class="flex text-yellow-400 mr-2">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="text-white-text font-medium">10/10</span>
+                            </div>
+                            <p class="text-light-text mt-2 text-sm">"A masterful blend of social commentary and thriller elements that keeps you on the edge of your seat..."</p>
+                            <div class="flex items-center mt-3 text-sm">
+                                <span class="text-light-text mr-4"><i class="fas fa-thumbs-up text-green-500 mr-1"></i> 87</span>
+                                <span class="text-light-text"><i class="fas fa-comment text-blue-500 mr-1"></i> 21</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recently Watched -->
+            <div class="bg-dark-card rounded-2xl shadow-lg p-6 mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-white-text">🎬 Recently Watched</h2>
+                    <a href="#" class="text-electric-blue hover:text-vibrant-teal text-sm font-medium transition duration-300">
+                        View All <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+                <div class="grid grid-cols-3 sm:grid-cols-5 gap-4">
+                    <!-- Movie 1 -->
+                    <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="aspect-w-2 aspect-h-3">
+                            <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-32 flex items-center justify-center">
+                                <i class="fas fa-film text-gray-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-2">
+                            <h3 class="font-semibold text-white-text text-xs truncate">Inception</h3>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie 2 -->
+                    <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="aspect-w-2 aspect-h-3">
+                            <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-32 flex items-center justify-center">
+                                <i class="fas fa-film text-gray-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-2">
+                            <h3 class="font-semibold text-white-text text-xs truncate">The Dark Knight</h3>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie 3 -->
+                    <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="aspect-w-2 aspect-h-3">
+                            <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-32 flex items-center justify-center">
+                                <i class="fas fa-film text-gray-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-2">
+                            <h3 class="font-semibold text-white-text text-xs truncate">Parasite</h3>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie 4 -->
+                    <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="aspect-w-2 aspect-h-3">
+                            <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-32 flex items-center justify-center">
+                                <i class="fas fa-film text-gray-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-2">
+                            <h3 class="font-semibold text-white-text text-xs truncate">Interstellar</h3>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie 5 -->
+                    <div class="group relative bg-dark-accent rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="aspect-w-2 aspect-h-3">
+                            <div class="bg-dark-card border-2 border-dashed rounded-xl w-full h-32 flex items-center justify-center">
+                                <i class="fas fa-film text-gray-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark-card to-transparent opacity-90"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-2">
+                            <h3 class="font-semibold text-white-text text-xs truncate">Tenet</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Currently Watching TV Shows -->
+            <div class="bg-dark-card rounded-2xl shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-white-text mb-6">📺 Currently Watching TV Shows</h2>
+                <div class="space-y-6">
+                    <!-- Show 1 -->
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 mr-4">
+                            <div class="bg-dark-accent border-2 border-dashed rounded-xl w-16 h-24 flex items-center justify-center">
+                                <i class="fas fa-tv text-gray-500"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-semibold text-white-text">Stranger Things</h3>
+                            <p class="text-light-text text-sm">Season 4 • Episode 6 of 9</p>
+                            <div class="mt-2 w-full bg-dark-accent rounded-full h-2">
+                                <div class="bg-electric-blue h-2 rounded-full" style="width: 66%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Show 2 -->
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 mr-4">
+                            <div class="bg-dark-accent border-2 border-dashed rounded-xl w-16 h-24 flex items-center justify-center">
+                                <i class="fas fa-tv text-gray-500"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-semibold text-white-text">The Mandalorian</h3>
+                            <p class="text-light-text text-sm">Season 3 • Episode 4 of 8</p>
+                            <div class="mt-2 w-full bg-dark-accent rounded-full h-2">
+                                <div class="bg-electric-blue h-2 rounded-full" style="width: 50%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Tab switching functionality
+document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', function() {
+        // Remove active class from all buttons
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('text-white-text', 'border-electric-blue');
+            btn.classList.add('text-light-text', 'border-transparent');
+        });
+        
+        // Add active class to clicked button
+        this.classList.remove('text-light-text', 'border-transparent');
+        this.classList.add('text-white-text', 'border-electric-blue');
+        
+        // In a real app, this would load the corresponding content
+        console.log('Switched to tab:', this.textContent.trim());
+    });
+});
+</script>
+{% endblock %}
