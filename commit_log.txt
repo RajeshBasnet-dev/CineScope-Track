@@ -6,3 +6,4 @@ This file tracks the commit history for the CineScope Tracker project.
 1. Initial commit: CineScope Tracker project3. Update project files - commit 3
 4. Update project files - commit 4
 5. Update project files - commit 5
+6. Update project files - commit 6
