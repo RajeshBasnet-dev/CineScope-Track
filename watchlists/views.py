@@ -11,50 +11,59 @@ def watchlist(request):
     from services.tmdb_service import TMDBService
     tmdb_service = TMDBService()
     
-    watchlists = UserWatchlist.objects.filter(user=request.user)
-    
-    # Group by status
-    plan_to_watch = watchlists.filter(status='plan_to_watch')
-    watching = watchlists.filter(status='watching')
-    completed = watchlists.filter(status='completed')
-    dropped = watchlists.filter(status='dropped')
-    
-    # Fetch real data for each watchlist item
-    def enrich_watchlist_items(items):
-        enriched_items = []
-        for item in items:
-            try:
-                if item.content_type == 'movie':
-                    details = tmdb_service.get_movie_details(item.content_id)
-                    item.title = details.get('title', 'Unknown Movie')
-                    item.poster_path = details.get('poster_path', '')
-                    item.release_date = details.get('release_date', '')
-                elif item.content_type == 'tv':
-                    details = tmdb_service.get_tv_show_details(item.content_id)
-                    item.title = details.get('name', 'Unknown TV Show')
-                    item.poster_path = details.get('poster_path', '')
-                    item.release_date = details.get('first_air_date', '')
-                enriched_items.append(item)
-            except Exception as e:
-                # If we can't fetch details, use fallback data
-                item.title = 'Unknown Title'
-                item.poster_path = ''
-                item.release_date = ''
-                enriched_items.append(item)
-        return enriched_items
-    
-    # Enrich all watchlist items with real data
-    enriched_plan_to_watch = enrich_watchlist_items(plan_to_watch)
-    enriched_watching = enrich_watchlist_items(watching)
-    enriched_completed = enrich_watchlist_items(completed)
-    enriched_dropped = enrich_watchlist_items(dropped)
-    
-    context = {
-        'plan_to_watch': enriched_plan_to_watch,
-        'watching': enriched_watching,
-        'completed': enriched_completed,
-        'dropped': enriched_dropped,
-    }
+    try:
+        watchlists = UserWatchlist.objects.filter(user=request.user)
+        
+        # Group by status
+        plan_to_watch = watchlists.filter(status='plan_to_watch')
+        watching = watchlists.filter(status='watching')
+        completed = watchlists.filter(status='completed')
+        dropped = watchlists.filter(status='dropped')
+        
+        # Fetch real data for each watchlist item
+        def enrich_watchlist_items(items):
+            enriched_items = []
+            for item in items:
+                try:
+                    if item.content_type == 'movie':
+                        details = tmdb_service.get_movie_details(item.content_id)
+                        item.title = details.get('title', 'Unknown Movie')
+                        item.poster_path = details.get('poster_path', '')
+                        item.release_date = details.get('release_date', '')
+                    elif item.content_type == 'tv':
+                        details = tmdb_service.get_tv_show_details(item.content_id)
+                        item.title = details.get('name', 'Unknown TV Show')
+                        item.poster_path = details.get('poster_path', '')
+                        item.release_date = details.get('first_air_date', '')
+                    enriched_items.append(item)
+                except Exception as e:
+                    # If we can't fetch details, use fallback data
+                    item.title = 'Unknown Title'
+                    item.poster_path = ''
+                    item.release_date = ''
+                    enriched_items.append(item)
+            return enriched_items
+        
+        # Enrich all watchlist items with real data
+        enriched_plan_to_watch = enrich_watchlist_items(plan_to_watch)
+        enriched_watching = enrich_watchlist_items(watching)
+        enriched_completed = enrich_watchlist_items(completed)
+        enriched_dropped = enrich_watchlist_items(dropped)
+        
+        context = {
+            'plan_to_watch': enriched_plan_to_watch,
+            'watching': enriched_watching,
+            'completed': enriched_completed,
+            'dropped': enriched_dropped,
+        }
+    except Exception as e:
+        # Handle any errors gracefully
+        context = {
+            'plan_to_watch': [],
+            'watching': [],
+            'completed': [],
+            'dropped': [],
+        }
     
     return render(request, 'watchlists/watchlist.html', context)
 
