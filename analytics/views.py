@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import UserAnalytics, GenreTimeSpent, MonthlyActivity
 from movies.models import UserRating
 from watchlists.models import UserWatchlist, UserEpisodeProgress
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Avg
 from datetime import datetime, timedelta
 import json
 
@@ -27,8 +27,13 @@ def dashboard(request):
     # Get monthly activity data (last 12 months)
     monthly_data = MonthlyActivity.objects.filter(user=user).order_by('-year', '-month')[:12]
     
-    # Get user ratings
-    user_ratings = UserRating.objects.filter(user=user).order_by('-created_at')[:10]
+    # Get user ratings with aggregation
+    user_ratings = UserRating.objects.filter(user=user)
+    ratings_aggregate = user_ratings.aggregate(
+        count=Count('rating'),
+        sum=Sum('rating'),
+        average=Avg('rating')
+    )
     
     # Get completion rate
     total_watchlist_items = UserWatchlist.objects.filter(user=user).count()
@@ -68,6 +73,7 @@ def dashboard(request):
         'genre_data': genre_data,
         'monthly_data': monthly_data,
         'user_ratings': user_ratings,
+        'ratings_aggregate': ratings_aggregate,
         'completion_rate': completion_rate,
         'monthly_labels': json.dumps(monthly_labels),
         'monthly_hours': json.dumps(monthly_hours),
