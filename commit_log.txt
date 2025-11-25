@@ -88,3 +88,4 @@ This file tracks the commit history for the CineScope Tracker project.
 85. Update project files - commit 85
 86. Update project files - commit 86
 87. Update project files - commit 87
+88. Update project files - commit 88
