@@ -501,17 +501,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Initialize watched button state
-    const initialCompletedStatus = document.getElementById('watchlist-data').dataset.watchStatus === 'completed';
+    const currentWatchStatus = document.getElementById('watchlist-data').dataset.watchStatus;
+    const initialCompletedStatus = currentWatchStatus === 'completed';
     if (initialCompletedStatus) {
         updateWatchedUI(true);
     }
     
+    // Also update watchlist button if item is in any watchlist status
+    if (currentWatchStatus) {
+        updateWatchlistUI(true);
+    }
+
     if (markWatchedBtn) {
         markWatchedBtn.addEventListener('click', function() {
             const isWatched = this.classList.contains('bg-green-600');
             const newStatus = isWatched ? 'plan_to_watch' : 'completed';
             
-            // First ensure the item is in the watchlist
+            // Use add_to_watchlist which handles both creating new items and updating existing ones
             fetch('{% url "add_to_watchlist" %}', {
                 method: 'POST',
                 headers: {
@@ -527,10 +533,10 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Then update the UI
+                    // Update UI based on the new status
                     updateWatchedUI(!isWatched);
                     updateWatchlistUI(true);
-                    // Update the data attribute
+                    // Update the data attribute to reflect the new status
                     document.getElementById('watchlist-data').dataset.watchStatus = newStatus;
                 } else {
                     alert('Error updating watch status: ' + data.message);
@@ -538,11 +544,11 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error updating watch status');
+                alert('Error updating watch status: Network error');
             });
         });
     }
-    
+
     // Favorite toggle functionality
     const favoriteBtn = document.getElementById('favorite-toggle');
     
