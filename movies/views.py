@@ -13,15 +13,22 @@ def home(request):
     try:
         trending_movies = tmdb_service.get_trending_movies()
         trending_tv = tmdb_service.get_trending_tv_shows()
+        # Get popular movies and TV shows as backup content
+        popular_movies = tmdb_service.get_popular_movies()
+        popular_tv = tmdb_service.get_popular_tv_shows()
         
         context = {
             'trending_movies': trending_movies.get('results', [])[:6],
             'trending_tv': trending_tv.get('results', [])[:6],
+            'popular_movies': popular_movies.get('results', [])[:6],
+            'popular_tv': popular_tv.get('results', [])[:6],
         }
     except Exception as e:
         context = {
             'trending_movies': [],
             'trending_tv': [],
+            'popular_movies': [],
+            'popular_tv': [],
         }
     
     return render(request, 'movies/home.html', context)
