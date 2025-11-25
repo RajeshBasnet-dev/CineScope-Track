@@ -194,6 +194,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Store original button content for reset
             const originalHTML = this.innerHTML;
             
+            // Show loading state
+            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Adding...';
+            this.disabled = true;
+            
             // Send request to add to watchlist
             fetch('{% url "add_to_watchlist" %}', {
                 method: 'POST',
@@ -222,14 +226,21 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.innerHTML = originalHTML;
                         this.classList.remove('bg-green-600');
                         this.classList.add('bg-electric-blue', 'hover:bg-vibrant-teal');
+                        this.disabled = false;
                     }, 2000);
                 } else {
                     showNotification('Failed to add to watchlist: ' + data.message, 'error');
+                    // Reset button on error
+                    this.innerHTML = originalHTML;
+                    this.disabled = false;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 showNotification('Network error while adding to watchlist', 'error');
+                // Reset button on error
+                this.innerHTML = originalHTML;
+                this.disabled = false;
             });
         });
     });
