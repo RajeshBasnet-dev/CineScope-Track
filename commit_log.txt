@@ -18,3 +18,4 @@ This file tracks the commit history for the CineScope Tracker project.
 15. Update project files - commit 15
 16. Update project files - commit 16
 17. Update project files - commit 17
+18. Update project files - commit 18
