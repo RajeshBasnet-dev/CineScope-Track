@@ -60,9 +60,17 @@
                     </div>
                 </div>
                 <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-4 py-2 rounded-lg font-medium text-sm transition duration-300">
+                    {% if user.is_authenticated %}
+                    <button class="add-to-watchlist bg-electric-blue hover:bg-vibrant-teal text-white-text px-4 py-2 rounded-lg font-medium text-sm transition duration-300" 
+                            data-content-id="{{ movie.id }}" 
+                            data-content-type="movie">
                         <i class="fas fa-plus mr-1"></i> Add
                     </button>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-4 py-2 rounded-lg font-medium text-sm transition duration-300">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </a>
+                    {% endif %}
                 </div>
             </div>
             {% empty %}
@@ -100,9 +108,17 @@
                     </div>
                 </div>
                 <div class="absolute inset-0 bg-electric-blue/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <button class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-4 py-2 rounded-lg font-medium text-sm transition duration-300">
+                    {% if user.is_authenticated %}
+                    <button class="add-to-watchlist bg-electric-blue hover:bg-vibrant-teal text-white-text px-4 py-2 rounded-lg font-medium text-sm transition duration-300" 
+                            data-content-id="{{ show.id }}" 
+                            data-content-type="tv">
                         <i class="fas fa-plus mr-1"></i> Add
                     </button>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="bg-electric-blue hover:bg-vibrant-teal text-white-text px-4 py-2 rounded-lg font-medium text-sm transition duration-300">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </a>
+                    {% endif %}
                 </div>
             </div>
             {% empty %}
@@ -113,4 +129,60 @@
         </div>
     </section>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add to watchlist functionality for home page
+    const addToWatchlistButtons = document.querySelectorAll('.add-to-watchlist');
+    
+    addToWatchlistButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Check if user is authenticated
+            if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
+                alert('Please sign in to add items to your watchlist.');
+                return;
+            }
+            
+            const contentId = this.dataset.contentId;
+            const contentType = this.dataset.contentType;
+            
+            // Send request to add to watchlist
+            fetch('{% url "add_to_watchlist" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    content_id: contentId,
+                    content_type: contentType,
+                    status: 'plan_to_watch'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Change button text and style to indicate success
+                    this.innerHTML = '<i class="fas fa-check mr-1"></i> Added';
+                    this.classList.remove('bg-electric-blue', 'hover:bg-vibrant-teal');
+                    this.classList.add('bg-green-600');
+                    
+                    // Reset button after 2 seconds
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fas fa-plus mr-1"></i> Add';
+                        this.classList.remove('bg-green-600');
+                        this.classList.add('bg-electric-blue', 'hover:bg-vibrant-teal');
+                    }, 2000);
+                } else {
+                    alert('Error adding to watchlist: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error adding to watchlist: Network error');
+            });
+        });
+    });
+});
+</script>
 {% endblock %}
