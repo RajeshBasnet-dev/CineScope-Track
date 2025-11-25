@@ -421,12 +421,12 @@ function showNotification(message, type = 'info') {
     // Add to document
     document.body.appendChild(notification);
     
-    // Auto remove after 3 seconds
+    // Auto remove after 1.5 seconds (faster than before)
     setTimeout(() => {
         if (notification.parentNode) {
             notification.remove();
         }
-    }, 3000);
+    }, 1500);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -494,7 +494,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         updateWatchlistUI(false);
                         // Update the data attribute
                         document.getElementById('watchlist-data').dataset.watchStatus = '';
-                        showNotification('Successfully removed from watchlist', 'success');
+                        showNotification('Removed from watchlist', 'success');
                     } else {
                         // If item is not found, it's already removed, so just update UI
                         if (data.message === 'Item not found') {
@@ -503,13 +503,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             document.getElementById('watchlist-data').dataset.watchStatus = '';
                             showNotification('Item was not in watchlist', 'info');
                         } else {
-                            showNotification('Failed to remove from watchlist: ' + data.message, 'error');
+                            showNotification('Failed: ' + data.message, 'error');
                         }
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showNotification('Network error while removing from watchlist', 'error');
+                    showNotification('Network error', 'error');
                 });
             } else {
                 // Add to watchlist
@@ -531,14 +531,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         updateWatchlistUI(true);
                         // Update the data attribute
                         document.getElementById('watchlist-data').dataset.watchStatus = 'plan_to_watch';
-                        showNotification('Successfully added to watchlist', 'success');
+                        showNotification('Added to watchlist!', 'success');
                     } else {
-                        showNotification('Failed to add to watchlist: ' + data.message, 'error');
+                        showNotification('Failed: ' + data.message, 'error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showNotification('Network error while adding to watchlist', 'error');
+                    showNotification('Network error', 'error');
                 });
             }
         });
@@ -608,12 +608,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         showNotification('Marked as plan to watch', 'success');
                     }
                 } else {
-                    showNotification('Failed to update watch status: ' + data.message, 'error');
+                    showNotification('Failed: ' + data.message, 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                showNotification('Network error while updating watch status', 'error');
+                showNotification('Network error', 'error');
             });
         });
     }
@@ -634,7 +634,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 this.innerHTML = '<i class="fas fa-heart mr-2"></i> Favorited';
                 this.classList.add('text-red-500');
-                showNotification('Added to favorites', 'success');
+                showNotification('Added to favorites!', 'success');
             }
         });
     }
@@ -645,7 +645,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add('animate-pulse');
             setTimeout(() => {
                 this.classList.remove('animate-pulse');
-            }, 600);
+            }, 300); // Faster animation
         });
     }
 });

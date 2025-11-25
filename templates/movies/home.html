@@ -228,6 +228,7 @@
 
 <script>
 // Custom notification function for better user experience
+// Shows styled notifications in the top-right corner with auto-dismissal
 function showNotification(message, type = 'info') {
     // Remove any existing notifications
     const existingNotification = document.getElementById('custom-notification');
@@ -264,81 +265,87 @@ function showNotification(message, type = 'info') {
     // Add to document
     document.body.appendChild(notification);
     
-    // Auto remove after 3 seconds
+    // Auto remove after 1.5 seconds (faster than before)
     setTimeout(() => {
         if (notification.parentNode) {
             notification.remove();
         }
-    }, 3000);
+    }, 1500);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     // Add to watchlist functionality for home page
     const addToWatchlistButtons = document.querySelectorAll('.add-to-watchlist');
     
-    addToWatchlistButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Check if user is authenticated
-            if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
-                showNotification('Please sign in to add items to your watchlist', 'warning');
-                return;
-            }
-            
-            const contentId = this.dataset.contentId;
-            const contentType = this.dataset.contentType;
-            
-            // Store original button content for reset
-            const originalHTML = this.innerHTML;
-            
-            // Show loading state
-            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Adding...';
-            this.disabled = true;
-            
-            // Send request to add to watchlist
-            fetch('{% url "add_to_watchlist" %}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                },
-                body: JSON.stringify({
-                    content_id: contentId,
-                    content_type: contentType,
-                    status: 'plan_to_watch'
-                })
+    // Optimized event handler
+    const handleAddToWatchlist = function(e) {
+        e.preventDefault();
+        
+        // Check if user is authenticated
+        if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
+            showNotification('Please sign in to add items to your watchlist', 'warning');
+            return;
+        }
+        
+        const contentId = this.dataset.contentId;
+        const contentType = this.dataset.contentType;
+        
+        // Store original button content for reset
+        const originalHTML = this.innerHTML;
+        
+        // Show loading state (simpler loading indicator)
+        this.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>';
+        this.disabled = true;
+        
+        // Send request to add to watchlist
+        fetch('{% url "add_to_watchlist" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                content_id: contentId,
+                content_type: contentType,
+                status: 'plan_to_watch'
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Change button text and style to indicate success
-                    this.innerHTML = '<i class="fas fa-check mr-1"></i> Added';
-                    this.classList.remove('bg-electric-blue', 'hover:bg-vibrant-teal');
-                    this.classList.add('bg-green-600');
-                    
-                    showNotification('Successfully added to watchlist', 'success');
-                    
-                    // Reset button after 2 seconds
-                    setTimeout(() => {
-                        this.innerHTML = originalHTML;
-                        this.classList.remove('bg-green-600');
-                        this.classList.add('bg-electric-blue', 'hover:bg-vibrant-teal');
-                        this.disabled = false;
-                    }, 2000);
-                } else {
-                    showNotification('Failed to add to watchlist: ' + data.message, 'error');
-                    // Reset button on error
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Simplified success feedback
+                this.innerHTML = '<i class="fas fa-check mr-1"></i>';
+                this.classList.remove('bg-electric-blue', 'hover:bg-vibrant-teal');
+                this.classList.add('bg-green-600');
+                
+                showNotification('Added to watchlist!', 'success');
+                
+                // Faster reset after 1 second
+                setTimeout(() => {
                     this.innerHTML = originalHTML;
+                    this.classList.remove('bg-green-600');
+                    this.classList.add('bg-electric-blue', 'hover:bg-vibrant-teal');
                     this.disabled = false;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Network error while adding to watchlist', 'error');
+                }, 1000);
+            } else {
+                showNotification('Failed: ' + data.message, 'error');
                 // Reset button on error
                 this.innerHTML = originalHTML;
                 this.disabled = false;
-            });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Network error', 'error');
+            // Reset button on error
+            this.innerHTML = originalHTML;
+            this.disabled = false;
         });
+    };
+    
+    // Attach the optimized event handler
+    addToWatchlistButtons.forEach(button => {
+        button.addEventListener('click', handleAddToWatchlist);
     });
 });
 </script>

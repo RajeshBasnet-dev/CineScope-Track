@@ -533,12 +533,23 @@ document.getElementById('refresh-recommendations').addEventListener('click', fun
     this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Refreshing...';
     this.disabled = true;
     
-    // Simulate API call
+    // Simulate API call with reduced delay for faster feedback
     setTimeout(() => {
         this.innerHTML = '<i class="fas fa-sync-alt mr-2"></i> Refresh';
         this.disabled = false;
-        alert('Recommendations refreshed!');
-    }, 1500);
+        // Using a less intrusive notification
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-600 text-white-text px-4 py-2 rounded-lg shadow-lg z-50';
+        notification.textContent = 'Recommendations refreshed!';
+        document.body.appendChild(notification);
+        
+        // Auto remove after 1 second
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 1000);
+    }, 800); // Reduced from 1500ms to 800ms
 });
 
 // Add to watchlist functionality for recommendation items
@@ -546,67 +557,122 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners to all "Add" buttons
     const addButtons = document.querySelectorAll('.add-to-watchlist');
     
-    addButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Check if user is authenticated
-            if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
-                alert('Please sign in to add items to your watchlist');
-                return;
-            }
-            
-            // Get content ID and type from data attributes
-            const contentId = this.dataset.contentId;
-            const contentType = this.dataset.contentType;
-            
-            // Store original button content for reset
-            const originalHTML = this.innerHTML;
-            
-            // Show loading state
-            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Adding...';
-            this.disabled = true;
-            
-            // Send request to add to watchlist
-            fetch('{% url "add_to_watchlist" %}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                },
-                body: JSON.stringify({
-                    content_id: contentId,
-                    content_type: contentType,
-                    status: 'plan_to_watch'
-                })
+    // Optimized event handler function
+    const handleAddToWatchlist = function(e) {
+        e.preventDefault();
+        
+        // Check if user is authenticated
+        if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
+            showFastNotification('Please sign in to add items to your watchlist', 'warning');
+            return;
+        }
+        
+        // Get content ID and type from data attributes
+        const contentId = this.dataset.contentId;
+        const contentType = this.dataset.contentType;
+        
+        // Store original button content for reset
+        const originalHTML = this.innerHTML;
+        
+        // Show loading state
+        this.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>';
+        this.disabled = true;
+        
+        // Send request to add to watchlist
+        fetch('{% url "add_to_watchlist" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                content_id: contentId,
+                content_type: contentType,
+                status: 'plan_to_watch'
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Change button text and style to indicate success
-                    this.innerHTML = '<i class="fas fa-check mr-1"></i> Added';
-                    this.classList.remove('bg-electric-blue', 'hover:bg-vibrant-teal');
-                    this.classList.add('bg-green-600');
-                    
-                    // Reset button after 2 seconds
-                    setTimeout(() => {
-                        this.innerHTML = originalHTML;
-                        this.classList.remove('bg-green-600');
-                        this.classList.add('bg-electric-blue', 'hover:bg-vibrant-teal');
-                        this.disabled = false;
-                    }, 2000);
-                } else {
-                    alert('Failed to add to watchlist: ' + data.message);
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Faster success feedback
+                this.innerHTML = '<i class="fas fa-check mr-1"></i>';
+                this.classList.remove('bg-electric-blue', 'hover:bg-vibrant-teal');
+                this.classList.add('bg-green-600');
+                
+                // Faster reset after 1 second
+                setTimeout(() => {
                     this.innerHTML = originalHTML;
+                    this.classList.remove('bg-green-600');
+                    this.classList.add('bg-electric-blue', 'hover:bg-vibrant-teal');
                     this.disabled = false;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Network error while adding to watchlist');
+                }, 1000);
+                
+                showFastNotification('Added to watchlist!', 'success');
+            } else {
+                showFastNotification('Failed: ' + data.message, 'error');
                 this.innerHTML = originalHTML;
                 this.disabled = false;
-            });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showFastNotification('Network error', 'error');
+            this.innerHTML = originalHTML;
+            this.disabled = false;
         });
+    };
+    
+    // Attach the optimized event handler
+    addButtons.forEach(button => {
+        button.addEventListener('click', handleAddToWatchlist);
     });
+    
+    // Fast notification function
+    function showFastNotification(message, type = 'info') {
+        // Remove any existing notifications
+        const existing = document.querySelector('.fast-notification');
+        if (existing) existing.remove();
+        
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `fast-notification fixed top-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg transform transition-all duration-200 ease-in-out`;
+        
+        // Set styles based on type
+        if (type === 'success') {
+            notification.classList.add('bg-green-600', 'text-white');
+        } else if (type === 'error') {
+            notification.classList.add('bg-red-600', 'text-white');
+        } else if (type === 'warning') {
+            notification.classList.add('bg-yellow-500', 'text-dark-bg');
+        } else {
+            notification.classList.add('bg-electric-blue', 'text-white');
+        }
+        
+        notification.innerHTML = `
+            <div class="flex items-center">
+                ${type === 'success' ? '<i class="fas fa-check-circle mr-2"></i>' : ''}
+                ${type === 'error' ? '<i class="fas fa-exclamation-circle mr-2"></i>' : ''}
+                ${type === 'warning' ? '<i class="fas fa-exclamation-triangle mr-2"></i>' : ''}
+                ${type === 'info' ? '<i class="fas fa-info-circle mr-2"></i>' : ''}
+                <span>${message}</span>
+            </div>
+        `;
+        
+        // Add to document
+        document.body.appendChild(notification);
+        
+        // Auto remove after 1.5 seconds (faster than before)
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 200);
+            }
+        }, 1500);
+    }
 });
 </script>
 {% endblock %}
