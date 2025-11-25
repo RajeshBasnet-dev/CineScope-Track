@@ -38,3 +38,4 @@ This file tracks the commit history for the CineScope Tracker project.
 35. Update project files - commit 35
 36. Update project files - commit 36
 37. Update project files - commit 37
+38. Update project files - commit 38
