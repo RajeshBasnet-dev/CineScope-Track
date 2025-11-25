@@ -388,9 +388,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const movieId = "{{ movie.id }}";
     const contentType = "movie";
     
+    // Validate that we have a movie ID
+    if (!movieId) {
+        console.error('Movie ID not found');
+        return;
+    }
+    
     // Watchlist toggle functionality
     const watchlistBtn = document.getElementById('watchlist-toggle');
-    const watchlistIconBtn = document.getElementById('watchlist-btn');
     
     // Check initial watchlist status
     function updateWatchlistUI(isInWatchlist) {
@@ -403,14 +408,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 watchlistBtn.innerHTML = '<i class="fas fa-plus mr-2"></i> Add to Watchlist';
                 watchlistBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
                 watchlistBtn.classList.add('bg-electric-blue', 'hover:bg-vibrant-teal');
-            }
-        }
-        
-        if (watchlistIconBtn) {
-            if (isInWatchlist) {
-                watchlistIconBtn.innerHTML = '<i class="fas fa-bookmark text-electric-blue"></i>';
-            } else {
-                watchlistIconBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
             }
         }
     }
@@ -443,8 +440,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data.success) {
                         updateWatchlistUI(false);
+                        // Update the data attribute
+                        document.getElementById('watchlist-data').dataset.watchStatus = '';
                     } else {
-                        alert('Error removing from watchlist');
+                        alert('Error removing from watchlist: ' + data.message);
                     }
                 })
                 .catch(error => {
@@ -469,23 +468,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data.success) {
                         updateWatchlistUI(true);
+                        // Update the data attribute
+                        document.getElementById('watchlist-data').dataset.watchStatus = 'plan_to_watch';
                     } else {
-                        alert('Error adding to watchlist');
+                        alert('Error adding to watchlist: ' + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     alert('Error adding to watchlist');
                 });
-            }
-        });
-    }
-    
-    if (watchlistIconBtn) {
-        watchlistIconBtn.addEventListener('click', function() {
-            const mainBtn = document.getElementById('watchlist-toggle');
-            if (mainBtn) {
-                mainBtn.click(); // Trigger the main button click
             }
         });
     }
@@ -519,7 +511,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const isWatched = this.classList.contains('bg-green-600');
             const newStatus = isWatched ? 'plan_to_watch' : 'completed';
             
-            fetch('{% url "move_watchlist_item" %}', {
+            // First ensure the item is in the watchlist
+            fetch('{% url "add_to_watchlist" %}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -528,19 +521,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify({
                     content_id: movieId,
                     content_type: contentType,
-                    new_status: newStatus
+                    status: newStatus
                 })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // Then update the UI
                     updateWatchedUI(!isWatched);
-                    // Also update the watchlist button if needed
-                    if (!isWatched) {
-                        updateWatchlistUI(true);
-                    }
+                    updateWatchlistUI(true);
+                    // Update the data attribute
+                    document.getElementById('watchlist-data').dataset.watchStatus = newStatus;
                 } else {
-                    alert('Error updating watch status');
+                    alert('Error updating watch status: ' + data.message);
                 }
             })
             .catch(error => {
@@ -552,7 +545,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Favorite toggle functionality
     const favoriteBtn = document.getElementById('favorite-toggle');
-    const favoriteIconBtn = document.getElementById('favorite-btn');
     
     // For now, we'll implement a simple toggle without backend integration
     // In a real app, this would connect to a favorites API
@@ -570,18 +562,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    if (favoriteIconBtn) {
-        favoriteIconBtn.addEventListener('click', function() {
-            const mainBtn = document.getElementById('favorite-toggle');
-            if (mainBtn) {
-                mainBtn.click(); // Trigger the main button click
-            }
-        });
-    }
-    
     // Add animation to favorite button
-    if (favoriteIconBtn) {
-        favoriteIconBtn.addEventListener('click', function() {
+    if (favoriteBtn) {
+        favoriteBtn.addEventListener('click', function() {
             this.classList.add('animate-pulse');
             setTimeout(() => {
                 this.classList.remove('animate-pulse');
