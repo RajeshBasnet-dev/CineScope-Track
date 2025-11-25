@@ -28,3 +28,4 @@ This file tracks the commit history for the CineScope Tracker project.
 25. Update project files - commit 25
 26. Update project files - commit 26
 27. Update project files - commit 27
+28. Update project files - commit 28
